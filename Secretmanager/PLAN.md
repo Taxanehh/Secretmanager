@@ -14,8 +14,8 @@ in pieces with what I have built up until now.
 - ✓ Make a wireframe, combine that in the wireflow and code the part
 - ✓ Navigation bar
 - ✓ 1 css file
-- Registration page
-- Registration instructions
+- ✓ Registration page
+- ✓ Registration instructions
 - Login page
 - Responsive design (so I don't have to rewrite anything / everything later)
 - Registration to .CSV file
