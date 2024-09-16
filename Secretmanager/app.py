@@ -11,6 +11,8 @@
 from flask import Flask, render_template, request, flash, session, redirect, url_for
 # Bcrypt for session encryption & user encryption
 from flask_bcrypt import Bcrypt
+# Fernet for encrypting and decrypting secrets as an extra layer of security
+from cryptography.fernet import Fernet
 # Os import to make sure .csv file works on every OS
 import os
 # CSV reading utilities
@@ -19,6 +21,10 @@ import csv
 app = Flask(__name__, template_folder='pages', static_folder='static')
 bcrypt = Bcrypt(app)
 app.secret_key = 'paulus'
+
+# Secret key for encrypting and decrypting passwords (replace with your own saved key)
+fernet_key = b'cVpK1oJHq5E4cK_pltia43Vr1GekwO4dA_UlLDK-xgM='
+cipher = Fernet(fernet_key)
 
 # Seperate .CSV files for user data and secrets data
 USER_DATA_FILE = os.path.join(os.path.dirname(__file__), 'users.csv')
@@ -66,6 +72,41 @@ def validate_login(username, password):
     except Exception as e:
         print(f"Error reading user data: {e}")
     return False
+
+# Encrypt password before saving
+def encrypt_password(plain_password):
+    return cipher.encrypt(plain_password.encode()).decode()
+
+# Decrypt password for viewing
+def decrypt_password(encrypted_password):
+    return cipher.decrypt(encrypted_password.encode()).decode()
+
+# Save the password along with the associated username
+def save_password(username, site, account_username, account_password):
+    encrypted_password = encrypt_password(account_password)
+    try:
+        with open(PASSWORD_DATA_FILE, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([username, site, account_username, encrypted_password])
+    except Exception as e:
+        print(f"Error saving password: {e}")
+
+# Load passwords filtered by the logged-in username
+def load_passwords(username):
+    passwords = []
+    try:
+        with open(PASSWORD_DATA_FILE, mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) < 4:
+                    continue
+                if row[0] == username:  # Only load passwords for the logged-in user
+                    passwords.append([row[1], row[2], row[3]])  # Store encrypted passwords
+    except FileNotFoundError:
+        print("Password data file not found.")
+    except Exception as e:
+        print(f"Error reading password data: {e}")
+    return passwords
 
 # Register mechanism
 @app.route('/register', methods=['GET', 'POST'])
@@ -116,6 +157,54 @@ def login():
             flash('Invalid login credentials.') # No invalid password / username! for security reasons :)
 
     return render_template('login.html')  # This should render the login page
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))  # Ensure only logged-in users can access the dashboard
+
+    return render_template('dashboard.html')
+
+# Separate route to handle adding passwords without interfering with viewing
+@app.route('/add_password', methods=['POST'])
+def add_password():
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))  # Ensure only logged-in users can add passwords
+
+    # Process the form submission to add a new password
+    site = request.form.get('site')
+    account_username = request.form.get('account_username')
+    account_password = request.form.get('account_password')
+
+    save_password(username, site, account_username, account_password)
+    flash('Password saved successfully!')
+    return redirect(url_for('dashboard'))
+
+# New API route to handle decrypting password via AJAX
+# This is to prevent the URL from switching to dashboard/1 , ../2 etc
+# (Huge thanks to my little brother for the tip!)
+@app.route('/api/decrypt_password', methods=['POST'])
+def api_decrypt_password():
+    username = session.get('username')
+    if not username:
+        return {'error': 'Not logged in'}, 401
+
+    index = request.json.get('index')
+    passwords = load_passwords(username)
+
+    if 0 <= index < len(passwords):
+        encrypted_password = passwords[index][2]
+        decrypted_password = decrypt_password(encrypted_password)
+        return {'password': decrypted_password}, 200
+
+    return {'error': 'Invalid password index'}, 400
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
 @app.route('/contact')
 def contact():
