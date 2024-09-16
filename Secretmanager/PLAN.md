@@ -2,6 +2,12 @@
 
 Since every coder ever is writing their projects in English, I decided to write my documents and comments in English too.
 
+# SIDENOTE
+
+I have worked on this project in my own personal GitHub up until a certain point (up to a barely alpha version)
+By this logic, It will seem as if I have quickly copied the .css code, but in reality I am currently structuring this project and uploading it to HvA Gitlab
+in pieces with what I have built up until now.
+
 # The plan
 
 - Make a wireframe, combine that in the wireflow and code the part
@@ -30,4 +36,6 @@ Since every coder ever is writing their projects in English, I decided to write 
 
 # Currently doing
 
-Creating index.html in combination with navbar and beginning of css file
+~~ Creating index.html in combination with navbar and beginning of css file ~~
+Upload Main page, Upload wireframe, ask for feedback
+Create every other page in the navbar
