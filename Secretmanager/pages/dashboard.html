@@ -21,17 +21,6 @@
             <h2>Welcome to Your Dashboard, {{ session['username'] }}</h2>
             <a href="{{ url_for('logout') }}">Logout</a>
         </header>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <ul class="flashes">
-            {% for category, message in messages %}
-              <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-        {% endwith %}
-
         <section class="dashboard-form">
             <h2>Store a New Password</h2>
             <form method="POST" action="{{ url_for('add_password') }}">

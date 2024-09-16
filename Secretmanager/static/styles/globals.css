@@ -154,6 +154,20 @@ footer a:hover {
     color: var(--secondary-color);
 }
 
+/* Style the registration guide list */
+.registration-guide ul {
+    list-style-type: none; /* Removes the default bullet points */
+    padding-left: 0;   
+}
+
+.registration-guide li {
+    margin-bottom: 10px;   /* Adds some space between the list items */
+}
+
+.registration-guide strong {
+    color: #ffffff;
+}
+
 /* Form Sections (Register, Login, Contact) */
 .form-section {
     padding: 50px 20px;

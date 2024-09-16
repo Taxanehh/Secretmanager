@@ -50,6 +50,7 @@ def is_username_taken(username):
         pass
     return False
 
+# Make sure the login is valid by scanning the file
 def validate_login(username, password):
     try:
         with open(USER_DATA_FILE, mode='r') as file:
@@ -80,6 +81,15 @@ def register():
         if is_username_taken(username):
             flash('Username is already taken. Please choose a different one.')
             return render_template('register.html')
+        
+        # Validate that the username and password do not contain spaces
+        if ' ' in username:
+            flash('Username cannot contain spaces.')
+            return render_template('register.html')
+
+        if ' ' in password:
+            flash('Password cannot contain spaces.')
+            return render_template('register.html')
 
         if not username:
             flash('Username is required.')
@@ -103,7 +113,7 @@ def login():
             session['username'] = username
             return redirect(url_for('dashboard'))  # Redirect correctly to the dashboard
         else:
-            flash('Invalid login credentials.')
+            flash('Invalid login credentials.') # No invalid password / username! for security reasons :)
 
     return render_template('login.html')  # This should render the login page
 

@@ -6,3 +6,4 @@
 - HTML forms: https://www.w3schools.com/html/html_forms.asp
 - Some Register form in combination with python (although this contains SQL info moreso): https://www.geeksforgeeks.org/login-and-registration-project-using-flask-and-mysql/
 - Session info: https://testdriven.io/blog/flask-sessions/
+- redirect & url_for explanation: https://stackoverflow.com/questions/14343812/redirecting-to-url-in-flask
