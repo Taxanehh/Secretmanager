@@ -16,8 +16,8 @@ in pieces with what I have built up until now.
 - ✓ 1 css file
 - ✓ Registration page
 - ✓ Registration instructions
-- Login page
-- Responsive design (so I don't have to rewrite anything / everything later)
+- ✓ Login page
+- ✓ Responsive design (so I don't have to rewrite anything / everything later)
 - Registration to .CSV file
 - Secrets page
 - Recording secrets
@@ -39,4 +39,5 @@ in pieces with what I have built up until now.
 ~~ Creating index.html in combination with navbar and beginning of css file ~~
 ~~ Create hamburger menu for smaller screens ~~
 ~~ Upload Main page, Upload wireframe, ask for feedback ~~
-Create every other page in the navbar
+~~ Create every other page in the navbar ~~
+Create backend for registration (think of some security vulnerabilities)
