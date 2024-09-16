@@ -1,0 +1,17 @@
+/* General styles */
+:root {
+    --primary-color: #9178ff;
+    --secondary-color: #7059d3;
+    --background-color: #1c1c1c;
+    --text-color: #fff;
+    --accent-color: #a8a8a8;
+    --font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}

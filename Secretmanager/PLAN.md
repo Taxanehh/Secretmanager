@@ -1,6 +1,6 @@
 ## Time plan
 
-Since every coder ever is writing their projects in english, I decided to write my documents and comments in English too.
+Since every coder ever is writing their projects in English, I decided to write my documents and comments in English too.
 
 # The plan
 

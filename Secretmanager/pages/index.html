@@ -1,0 +1,57 @@
+<!-- Paul Stokreef -->
+ <!-- Secretmanager Assignment -->
+
+<!-- Declare document type -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Declare ASCII use, page size, URL Title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSS - Protect, Store, Succeed</title>
+    <!-- Link to stylesheet for app.py / Flask / Jinja -->
+    <link rel="stylesheet" 
+        href="{{ url_for('static', filename='styles/globals.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../static/public/logo.webp" alt="PSS Logo">
+            </div>
+            <!-- Class for small screen menu -->
+            <div class="menu-toggle" id="menu-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <!-- Buttons in the nav bar -->
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Register</a></li>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Main text, 5 star image etc. in middle of page -->
+        <section class="hero">
+            <h2>Your secrets, <span class="secure-text">Secure</span></h2>
+            <p>Store passwords, certificates and sensitive data</p>
+            <!-- Redirect for get started! button -->
+            <a href="#">
+                <button id="get-started-btn">Get started!</button>
+            </a>
+            <img src="../static/public/five.webp" alt="Five stars" style="width:10%;padding:1%;">
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; MMXXIV <a href="#">Paul S.</a></p>
+    </footer>
+
+</body>
+</html>
