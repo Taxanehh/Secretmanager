@@ -10,10 +10,10 @@ in pieces with what I have built up until now.
 
 # The plan
 
-- Make a wireframe, combine that in the wireflow and code the part
-- Main page (index.html)
-- Navigation bar
-- 1 css file
+- ✓ Main page (index.html)
+- ✓ Make a wireframe, combine that in the wireflow and code the part
+- ✓ Navigation bar
+- ✓ 1 css file
 - Registration page
 - Registration instructions
 - Login page
@@ -38,5 +38,5 @@ in pieces with what I have built up until now.
 
 ~~ Creating index.html in combination with navbar and beginning of css file ~~
 ~~ Create hamburger menu for smaller screens ~~
-Upload Main page, Upload wireframe, ask for feedback
+~~ Upload Main page, Upload wireframe, ask for feedback ~~
 Create every other page in the navbar

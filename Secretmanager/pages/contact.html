@@ -41,22 +41,19 @@
         </nav>
     </header>
 
-    <main>
-        <!-- Main text, 5 star image etc. in middle of page -->
-        <section class="hero">
-            <h2>Your secrets, <span class="secure-text">Secure</span></h2>
-            <p>Store passwords, certificates and sensitive data</p>
-            <!-- Redirect for get started! button -->
-            <a href="{{ url_for('register') }}">
-                <button id="get-started-btn">Get started!</button>
-            </a>
-            <img src="../static/public/five.webp" alt="Five stars" style="width:10%;padding:1%;">
-        </section>
+    <!-- Form section for contact page, doesn't actually work -->
+    <main class="form-section">
+        <h2>Contact Us</h2>
+        <form action="/contact" method="post">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" placeholder="Message" rows="4" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
     </main>
 
     <footer>
         <p>&copy; MMXXIV <a href="#">Paul S.</a></p>
     </footer>
-
 </body>
 </html>

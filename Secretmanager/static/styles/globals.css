@@ -151,6 +151,74 @@ footer a:hover {
     color: var(--secondary-color);
 }
 
+/* Form Sections (Register, Login, Contact) */
+.form-section {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #252525;
+    margin: 20px auto;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-section h2 {
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.form-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-section input, 
+.form-section textarea {
+    padding: 12px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-section input:focus, 
+.form-section textarea:focus {
+    border-color: var(--secondary-color);
+}
+
+.form-section button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.form-section button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* About Section */
+.about-section {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #252525;
+    color: var(--text-color);
+}
+
+.about-section p {
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-links {

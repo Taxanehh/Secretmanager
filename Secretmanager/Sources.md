@@ -3,3 +3,4 @@
 - Basically every css style ever: https://www.w3schools.com/css/
 - Flask tutorial for @app routing, encryption, user logins, ajax etc.: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 - Some JS Hamburger menu explanation: https://dev.to/devggaurav/let-s-build-a-responsive-navbar-and-hamburger-menu-using-html-css-and-javascript-4gci
+- HTML forms: https://www.w3schools.com/html/html_forms.asp
