@@ -4,3 +4,5 @@
 - Flask tutorial for @app routing, encryption, user logins, ajax etc.: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
 - Some JS Hamburger menu explanation: https://dev.to/devggaurav/let-s-build-a-responsive-navbar-and-hamburger-menu-using-html-css-and-javascript-4gci
 - HTML forms: https://www.w3schools.com/html/html_forms.asp
+- Some Register form in combination with python (although this contains SQL info moreso): https://www.geeksforgeeks.org/login-and-registration-project-using-flask-and-mysql/
+- Session info: https://testdriven.io/blog/flask-sessions/

@@ -1,0 +1,46 @@
+<!-- Paul Stokreef -->
+ <!-- Secretmanager Assignment -->
+
+<!-- Declare document type -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Declare ASCII use, page size, URL Title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSS - Protect, Store, Succeed</title>
+    <!-- Link to stylesheet for app.py / Flask / Jinja -->
+    <link rel="stylesheet" 
+        href="{{ url_for('static', filename='styles/globals.css') }}">
+    <!-- Logo in URL tab -->    
+    <link rel="icon" href="../static/public/logo.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h2>Welcome to Your Dashboard, {{ session['username'] }}</h2>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% endwith %}
+
+        <section class="dashboard-form">
+            <h2>Store a New Password</h2>
+            <form method="POST" action="{{ url_for('add_password') }}">
+                <input type="text" name="site" placeholder="Website" required>
+                <input type="text" name="account_username" placeholder="Account Username" required>
+                <input type="password" name="account_password" placeholder="Account Password" required>
+                <button type="submit">Save Password</button>
+            </form>
+        </section>
+    </div>
+</body>
+</html>

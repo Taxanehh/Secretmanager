@@ -5,7 +5,10 @@
 # Standard flask import for rendering the pages (templates)
 # Flask import for requesting data from forms and submitting them to files
 # Flask import for flashing warnings / messages
-from flask import Flask, render_template, request, flash
+# Flask import for session to prevent double user logins under same name
+# Flask import for redirecting login to dashboard
+# Flask import for finding redirects (because for some reason that's how it works)
+from flask import Flask, render_template, request, flash, session, redirect, url_for
 # Bcrypt for session encryption & user encryption
 from flask_bcrypt import Bcrypt
 # Os import to make sure .csv file works on every OS
@@ -47,6 +50,22 @@ def is_username_taken(username):
         pass
     return False
 
+def validate_login(username, password):
+    try:
+        with open(USER_DATA_FILE, mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if len(row) < 3:  # Ensure the row has at least 3 columns
+                    continue
+                if row[1] == username:
+                    if bcrypt.check_password_hash(row[2], password):
+                        return True
+    except FileNotFoundError:
+        print("User data file not found.")
+    except Exception as e:
+        print(f"Error reading user data: {e}")
+    return False
+
 # Register mechanism
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -73,9 +92,20 @@ def register():
     
     return render_template('register.html')
 
-@app.route('/login')
+# Login mechanism
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username and password and validate_login(username, password):
+            session['username'] = username
+            return redirect(url_for('dashboard'))  # Redirect correctly to the dashboard
+        else:
+            flash('Invalid login credentials.')
+
+    return render_template('login.html')  # This should render the login page
 
 @app.route('/contact')
 def contact():

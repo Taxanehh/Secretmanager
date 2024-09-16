@@ -40,4 +40,5 @@ in pieces with what I have built up until now.
 ~~ Create hamburger menu for smaller screens ~~
 ~~ Upload Main page, Upload wireframe, ask for feedback ~~
 ~~ Create every other page in the navbar ~~
-Create backend for registration (think of some security vulnerabilities)
+~~ Create backend for registration (think of some security vulnerabilities) ~~
+Create backend for login
