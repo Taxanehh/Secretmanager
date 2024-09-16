@@ -1,5 +1,6 @@
 # Paul Stokreef
 # Secretmanager Assignment
+# To be implemented: double username check, login mechanism, encryption / decryption
 
 from flask import Flask, render_template
 
