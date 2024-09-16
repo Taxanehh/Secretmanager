@@ -178,6 +178,7 @@ def add_password():
     account_username = request.form.get('account_username')
     account_password = request.form.get('account_password')
 
+    # STRUCTURE OF PASSWORD.CSV!!!
     save_password(username, site, account_username, account_password)
     flash('Password saved successfully!')
     return redirect(url_for('dashboard'))

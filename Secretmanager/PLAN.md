@@ -41,4 +41,5 @@ in pieces with what I have built up until now.
 ~~ Upload Main page, Upload wireframe, ask for feedback ~~
 ~~ Create every other page in the navbar ~~
 ~~ Create backend for registration (think of some security vulnerabilities) ~~
-Create backend for login
+~~ Create backend for login ~~
+Create dashboard with all features
