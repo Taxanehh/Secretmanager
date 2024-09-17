@@ -1,6 +1,8 @@
 # Paul Stokreef
 # Secretmanager Assignment
-# To be implemented: double username check, login mechanism, encryption / decryption
+# To be implemented: check for blur removal vulnerability, 
+# XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? 
+# maybe footer fix, looks nice now though
 
 # Standard flask import for rendering the pages (templates)
 # Flask import for requesting data from forms and submitting them to files
@@ -98,6 +100,7 @@ def load_passwords(username):
         with open(PASSWORD_DATA_FILE, mode='r') as file:
             reader = csv.reader(file)
             for row in reader:
+                # Check if it's the correct file
                 if len(row) < 4:
                     continue
                 if row[0] == username:  # Only load passwords for the logged-in user
@@ -164,7 +167,21 @@ def dashboard():
     if not username:
         return redirect(url_for('login'))  # Ensure only logged-in users can access the dashboard
 
-    return render_template('dashboard.html')
+    # Pagination logic
+    page = request.args.get('page', 1, type=int)  # Get the page number from the URL, default is page 1
+    per_page = 10  # Number of passwords to display per page
+    passwords = load_passwords(username)
+
+    # Calculate total pages and get the slice of passwords for the current page
+    total_pages = (len(passwords) + per_page - 1) // per_page  # Ceiling division to calculate total pages
+    passwords_on_page = passwords[(page - 1) * per_page: page * per_page]  # Slice the list for current page
+
+    return render_template(
+        'dashboard.html', 
+        passwords=passwords_on_page, 
+        page=page, 
+        total_pages=total_pages
+    )
 
 # Separate route to handle adding passwords without interfering with viewing
 @app.route('/add_password', methods=['POST'])
@@ -195,12 +212,70 @@ def api_decrypt_password():
     index = request.json.get('index')
     passwords = load_passwords(username)
 
+    # gather the password and decrypt it, ready to show it
     if 0 <= index < len(passwords):
         encrypted_password = passwords[index][2]
         decrypted_password = decrypt_password(encrypted_password)
+        # 200 is the net code for continue
         return {'password': decrypted_password}, 200
 
     return {'error': 'Invalid password index'}, 400
+
+@app.route('/edit_password/<int:index>', methods=['POST'])
+def edit_password(index):
+    # As you see, each command checks for session legitimacy
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    # Gather the username and password from the form
+    site = request.form.get('site')
+    account_username = request.form.get('account_username')
+    account_password = request.form.get('account_password')
+
+    # Encrypt the new password
+    encrypted_password = encrypt_password(account_password)
+
+    # Read all passwords and update the specific one
+    passwords = load_passwords(username)
+
+    if 0 <= index < len(passwords):
+        passwords[index] = [site, account_username, encrypted_password]
+
+        # Save the updated password list back to the CSV file
+        try:
+            with open(PASSWORD_DATA_FILE, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                for row in passwords:
+                    writer.writerow([username] + row)  # Save username with each password
+        except Exception as e:
+            print(f"Error updating password: {e}")
+
+    flash('Password updated successfully!')
+    return redirect(url_for('dashboard'))
+
+# New route to handle deleting a password
+@app.route('/delete_password/<int:index>', methods=['POST'])
+def delete_password(index):
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('login'))
+
+    passwords = load_passwords(username)
+
+    if 0 <= index < len(passwords):
+        passwords.pop(index)
+        # Overwrite the CSV file with updated passwords
+        with open(PASSWORD_DATA_FILE, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            for pw in passwords:
+                writer.writerow([username] + pw)
+
+        flash('Password deleted successfully!')
+    else:
+        flash('Invalid password index.')
+
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():

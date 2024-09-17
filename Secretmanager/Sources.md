@@ -8,3 +8,4 @@
 - Session info: https://testdriven.io/blog/flask-sessions/
 - redirect & url_for explanation: https://stackoverflow.com/questions/14343812/redirecting-to-url-in-flask
 - Fernet: https://cryptography.io/en/latest/fernet/
+- Overige python .csv kennis: vorige studie, Kunstmatige Intelligentie, Datascience vak

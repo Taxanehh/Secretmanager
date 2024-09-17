@@ -1,5 +1,6 @@
 <!-- Paul Stokreef -->
  <!-- Secretmanager Assignment -->
+<!-- The template works with the errors! -->
 
 <!-- Declare document type -->
 <!DOCTYPE html>
@@ -16,13 +17,29 @@
     <link rel="icon" href="../static/public/logo.ico" type="image/x-icon">
 </head>
 <body>
+    <!-- Dashboard container -->
     <div class="dashboard-container">
+        <!-- Dashboard header with a welcome message and logout button -->
         <header class="dashboard-header">
             <h2>Welcome to Your Dashboard, {{ session['username'] }}</h2>
             <a href="{{ url_for('logout') }}">Logout</a>
         </header>
+
+        <!-- Display flash messages (success, error, etc.) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Section for adding a new password -->
         <section class="dashboard-form">
             <h2>Store a New Password</h2>
+            <!-- Form to add new password (website, username, password) -->
             <form method="POST" action="{{ url_for('add_password') }}">
                 <input type="text" name="site" placeholder="Website" required>
                 <input type="text" name="account_username" placeholder="Account Username" required>
@@ -31,10 +48,12 @@
             </form>
         </section>
 
-        <section class="password-list"></section>
-            <h2>Saved Passwords</h2>
+        <!-- Section for displaying saved passwords with pagination -->
+        <section class="password-list">
+            <h2>Saved Passwords (Page {{ page }})</h2>
             <table>
                 <thead>
+                    <!-- Table headers: Website, Username, Password, Actions -->
                     <tr>
                         <th>Website</th>
                         <th>Username</th>
@@ -42,12 +61,108 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <!-- Loop to display each saved password -->
+                    {% for password in passwords %}
+                    <tr>
+                        <td>{{ password[0] }}</td>
+                        <td>{{ password[1] }}</td>
+                        <!-- Password is initially blurred for security reasons, though I have to check security -->
+                        <td class="password-cell blurred" id="password-{{ loop.index0 }}">{{ password[2] }}</td>
+                        <td>
+                            <!-- Buttons for showing/hiding, editing, and deleting passwords -->
+                            <button id="toggle-btn-{{ loop.index0 }}" onclick="togglePassword({{ loop.index0 }})">Show</button>
+                            <button id="edit-btn-{{ loop.index0 }}" onclick="editPassword({{ loop.index0 }})">Edit</button>
+                            <form action="{{ url_for('delete_password', index=loop.index0) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <!-- Hidden form for editing a password -->
+                    <tr id="edit-form-{{ loop.index0 }}" style="display: none;">
+                        <td colspan="4">
+                            <!-- Form for editing password data-->
+                            <form id="edit-form-actual-{{ loop.index0 }}" action="{{ url_for('edit_password', index=loop.index0) }}" method="POST">
+                                <input type="text" name="site" value="{{ password[0] }}" required>
+                                <input type="text" name="account_username" value="{{ password[1] }}" required>
+                                <!-- Input for editing password, initially blurred -->
+                                <input type="text" id="edit-password-{{ loop.index0 }}" name="account_password" required>
+                                <button type="submit">Save</button>
+                                <button type="button" onclick="cancelEdit({{ loop.index0 }})">Cancel</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </section>
+
+        <!-- Pagination controls for navigating between pages of saved passwords -->
+        <div class="pagination-controls">
+            <!-- Show previous button if not on the first page -->
+            {% if page > 1 %}
+                <a href="{{ url_for('dashboard', page=page-1) }}">Previous</a>
+            {% endif %}
+
+            <!-- Show next button if there are more pages -->
+            {% if page < total_pages %}
+                <a href="{{ url_for('dashboard', page=page+1) }}">Next</a>
+            {% endif %}
+        </div>
     </div>
 
-    <footer>
-        <p>&copy; MMXXIV <a href="#">Paul S.</a></p>
-    </footer>
+    <!-- JavaScript for password visibility toggle and edit functionality -->
+    <script>
+        // Function to toggle password visibility (Show/Hide)
+        function togglePassword(index) {
+            const passwordCell = document.getElementById(`password-${index}`);
+            const toggleBtn = document.getElementById(`toggle-btn-${index}`);
+
+            if (passwordCell.classList.contains('blurred')) {
+                fetch('/api/decrypt_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index: index })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.password) {
+                        passwordCell.textContent = data.password;
+                        passwordCell.classList.remove('blurred');
+                        toggleBtn.textContent = 'Hide';
+                    } else {
+                        alert('Error decrypting password');
+                    }
+                });
+            } else {
+                passwordCell.textContent = '********';
+                passwordCell.classList.add('blurred');
+                toggleBtn.textContent = 'Show';
+            }
+        }
+
+        // Function to show the edit form with all its stuff
+        function editPassword(index) {
+            fetch('/api/decrypt_password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ index: index })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.password) {
+                    document.getElementById(`edit-password-${index}`).value = data.password;
+                    document.getElementById(`edit-form-${index}`).style.display = 'table-row';
+                } else {
+                    alert('Error decrypting password for editing');
+                }
+            });
+        }
+
+        // Function to cancel the edit operation
+        function cancelEdit(index) {
+            document.getElementById(`edit-form-${index}`).style.display = 'none';
+        }
+    </script>
 </body>
 </html>

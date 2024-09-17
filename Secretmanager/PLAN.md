@@ -18,16 +18,16 @@ in pieces with what I have built up until now.
 - ✓ Registration instructions
 - ✓ Login page
 - ✓ Responsive design (so I don't have to rewrite anything / everything later)
-- Registration to .CSV file
-- Secrets page
-- Recording secrets
-- Showing secrets
-- Unaccessable secrets page
-- Logging out
-- Changing secrets
-- Deleting secrets
-- Scrolling secrets
-- Loginpage validation
+- ✓ Registration to .CSV file
+- ✓ Secrets page
+- ✓ Recording secrets
+- ✓ Showing secrets
+- ✓ Unaccessable secrets page
+- ✓ Logging out
+- ✓ Changing secrets
+- ✓ Deleting secrets
+- ✓ Scrolling secrets
+- ✓ Loginpage validation
 - Selecting secrets
 - 2FA
 - HTTPS
@@ -42,4 +42,7 @@ in pieces with what I have built up until now.
 ~~ Create every other page in the navbar ~~
 ~~ Create backend for registration (think of some security vulnerabilities) ~~
 ~~ Create backend for login ~~
-Create dashboard with all features
+~~ Create dashboard with all features ~~
+Gather security vulnerabilities and other (see app.py)
+Maybe different colors for edit / save / delete button?
+To be implemented: check for blur removal vulnerability, XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? maybe footer fix, looks nice now though
