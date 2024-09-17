@@ -28,7 +28,6 @@ in pieces with what I have built up until now.
 - ✓ Deleting secrets
 - ✓ Scrolling secrets
 - ✓ Loginpage validation
-- Selecting secrets
 - 2FA
 - HTTPS
 - PEN test & SQL test
@@ -43,6 +42,7 @@ in pieces with what I have built up until now.
 ~~ Create backend for registration (think of some security vulnerabilities) ~~
 ~~ Create backend for login ~~
 ~~ Create dashboard with all features ~~
+Look through HvA code rules
 Gather security vulnerabilities and other (see app.py)
 Maybe different colors for edit / save / delete button?
 To be implemented: check for blur removal vulnerability, XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? maybe footer fix, looks nice now though
