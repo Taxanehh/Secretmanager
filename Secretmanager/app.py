@@ -89,10 +89,11 @@ def decrypt_password(encrypted_password):
 # Save the password along with the associated username
 def save_password(username, site, account_username, account_password):
     encrypted_password = encrypt_password(account_password)
+    unique_code = str(uuid.uuid4())[:5]  # Generate a unique code (first 5 characters of a UUID)
     try:
         with open(PASSWORD_DATA_FILE, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([username, site, account_username, encrypted_password])
+            writer.writerow([username, site, account_username, encrypted_password, unique_code])
     except Exception as e:
         print(f"Error saving password: {e}")
 
@@ -104,10 +105,10 @@ def load_passwords(username):
             reader = csv.reader(file)
             for row in reader:
                 # Check if it's the correct file
-                if len(row) < 4:
+                if len(row) < 5: # Made extra row for unique UUID
                     continue
                 if row[0] == username:  # Only load passwords for the logged-in user
-                    passwords.append([row[1], row[2], row[3]])  # Store encrypted passwords
+                    passwords.append([row[1], row[2], row[3], row[4]])  # Store encrypted passwords
     except FileNotFoundError:
         print("Password data file not found.")
     except Exception as e:
@@ -174,6 +175,12 @@ def dashboard():
     page = request.args.get('page', 1, type=int)  # Get the page number from the URL, default is page 1
     per_page = 10  # Number of passwords to display per page
     passwords = load_passwords(username)
+
+    # Small mechanism to handle searching by unique code :)
+    if request.method == 'POST':
+        search_code = request.form.get('search_code')
+        if search_code:
+            passwords = [pw for pw in passwords if pw[3] == search_code]  # Filter by the unique code
 
     # Calculate total pages and get the slice of passwords for the current page
     total_pages = (len(passwords) + per_page - 1) // per_page  # Ceiling division to calculate total pages

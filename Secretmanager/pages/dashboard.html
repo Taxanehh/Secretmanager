@@ -46,6 +46,11 @@
                 <input type="password" name="account_password" placeholder="Account Password" required>
                 <button type="submit">Save Password</button>
             </form>
+            <!-- Search form -->
+            <form method="POST" action="{{ url_for('dashboard') }}">
+                <input type="text" name="search_code" placeholder="Search by Code" required>
+                <button type="submit">Search</button>
+            </form>
         </section>
 
         <!-- Section for displaying saved passwords with pagination -->
@@ -58,6 +63,7 @@
                         <th>Description</th>
                         <th>Username</th>
                         <th>Password</th>
+                        <th>UUID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -65,10 +71,12 @@
                     <!-- Loop to display each saved password -->
                     {% for password in passwords %}
                     <tr>
+                        <!-- Note: [0] means 1st item in index!! Learned that at Uni, note to self -->
                         <td>{{ password[0] }}</td>
                         <td>{{ password[1] }}</td>
                         <!-- Password is initially blurred for security reasons, though I have to check security -->
                         <td class="password-cell blurred" id="password-{{ loop.index0 }}">{{ password[2] }}</td>
+                        <td>{{ password[3] }}</td> <!-- Display the unique code -->
                         <td>
                             <!-- Buttons for showing/hiding, editing, and deleting passwords -->
                             <button id="toggle-btn-{{ loop.index0 }}" onclick="togglePassword({{ loop.index0 }})">Show</button>
