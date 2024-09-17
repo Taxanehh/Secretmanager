@@ -41,7 +41,7 @@
             <h2>Store a New Password</h2>
             <!-- Form to add new password (website, username, password) -->
             <form method="POST" action="{{ url_for('add_password') }}">
-                <input type="text" name="site" placeholder="Website" required>
+                <input type="text" name="site" placeholder="Description" required>
                 <input type="text" name="account_username" placeholder="Account Username" required>
                 <input type="password" name="account_password" placeholder="Account Password" required>
                 <button type="submit">Save Password</button>
@@ -55,7 +55,7 @@
                 <thead>
                     <!-- Table headers: Website, Username, Password, Actions -->
                     <tr>
-                        <th>Website</th>
+                        <th>Description</th>
                         <th>Username</th>
                         <th>Password</th>
                         <th>Actions</th>

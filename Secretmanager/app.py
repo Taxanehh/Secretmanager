@@ -3,6 +3,7 @@
 # To be implemented: check for blur removal vulnerability, 
 # XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? 
 # maybe footer fix, looks nice now though,
+# Fix when editing password, you get sent to page 1
 
 # Standard flask import for rendering the pages (templates)
 # Flask import for requesting data from forms and submitting them to files
@@ -15,6 +16,8 @@ from flask import Flask, render_template, request, flash, session, redirect, url
 from flask_bcrypt import Bcrypt
 # Fernet for encrypting and decrypting secrets as an extra layer of security
 from cryptography.fernet import Fernet
+# UUID import for generating random codes for secrets
+import uuid
 # Os import to make sure .csv file works on every OS
 import os
 # CSV reading utilities
@@ -279,6 +282,7 @@ def delete_password(index):
 
 @app.route('/logout')
 def logout():
+    # If a user tries to put /logout in the url, check for session
     if 'username' in session:
         session.pop('username', None)
         flash('Logged out succesfully!')
