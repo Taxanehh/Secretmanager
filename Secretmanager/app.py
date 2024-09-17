@@ -2,7 +2,7 @@
 # Secretmanager Assignment
 # To be implemented: check for blur removal vulnerability, 
 # XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? 
-# maybe footer fix, looks nice now though
+# maybe footer fix, looks nice now though,
 
 # Standard flask import for rendering the pages (templates)
 # Flask import for requesting data from forms and submitting them to files
@@ -279,8 +279,13 @@ def delete_password(index):
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
+    if 'username' in session:
+        session.pop('username', None)
+        flash('Logged out succesfully!')
+        return redirect(url_for('index'))
+    else:
+        flash('You are not logged in')
+        return redirect(url_for('index'))
 
 @app.route('/contact')
 def contact():

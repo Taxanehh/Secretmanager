@@ -44,6 +44,15 @@
     <main>
         <!-- Main text, 5 star image etc. in middle of page -->
         <section class="hero">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul class="flashes">
+                {% for category, message in messages %}
+                  <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% endwith %}
             <h2>Your secrets, <span class="secure-text">Secure</span></h2>
             <p>Store passwords, certificates and sensitive data</p>
             <!-- Redirect for get started! button -->
