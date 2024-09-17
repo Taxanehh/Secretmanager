@@ -1,9 +1,8 @@
 # Paul Stokreef
 # Secretmanager Assignment
 # To be implemented: check for blur removal vulnerability, 
-# XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? 
+# XSS Test, 2FA, HTTPS, Selecting secrets, better UI? 
 # maybe footer fix, looks nice now though,
-# Fix when editing password, you get sent to page 1
 
 # Standard flask import for rendering the pages (templates)
 # Flask import for requesting data from forms and submitting them to files
