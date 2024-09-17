@@ -16,8 +16,6 @@ from flask import Flask, render_template, request, flash, session, redirect, url
 from flask_bcrypt import Bcrypt
 # Fernet for encrypting and decrypting secrets as an extra layer of security
 from cryptography.fernet import Fernet
-# UUID import for generating random codes for secrets
-import uuid
 # Os import to make sure .csv file works on every OS
 import os
 # CSV reading utilities
@@ -87,13 +85,12 @@ def decrypt_password(encrypted_password):
     return cipher.decrypt(encrypted_password.encode()).decode()
 
 # Save the password along with the associated username
-def save_password(username, site, account_username, account_password):
+def save_password(username, site, account_username, account_password, custom_code):
     encrypted_password = encrypt_password(account_password)
-    unique_code = str(uuid.uuid4())[:5]  # Generate a unique code (first 5 characters of a UUID)
     try:
         with open(PASSWORD_DATA_FILE, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([username, site, account_username, encrypted_password, unique_code])
+            writer.writerow([username, site, account_username, encrypted_password, custom_code])
     except Exception as e:
         print(f"Error saving password: {e}")
 
@@ -105,7 +102,7 @@ def load_passwords(username):
             reader = csv.reader(file)
             for row in reader:
                 # Check if it's the correct file
-                if len(row) < 5: # Made extra row for unique UUID
+                if len(row) < 5: # Made extra row for unique ~~UUID~~ Custom code
                     continue
                 if row[0] == username:  # Only load passwords for the logged-in user
                     passwords.append([row[1], row[2], row[3], row[4]])  # Store encrypted passwords
@@ -165,7 +162,7 @@ def login():
 
     return render_template('login.html')  # This should render the login page
 
-@app.route('/dashboard', methods=['GET'])
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     username = session.get('username')
     if not username:
@@ -204,9 +201,22 @@ def add_password():
     site = request.form.get('site')
     account_username = request.form.get('account_username')
     account_password = request.form.get('account_password')
+    custom_code = request.form.get('custom_code')
+
+    if ' ' in account_username:
+            flash('Username cannot contain spaces.')
+            return redirect(url_for('dashboard'))
+
+    if ' ' in account_password:
+        flash('Password cannot contain spaces.')
+        return redirect(url_for('dashboard'))
+    
+    if ' ' in custom_code:
+        flash('Code cannot contain spaces.')
+        return redirect(url_for('dashboard'))
 
     # STRUCTURE OF PASSWORD.CSV!!!
-    save_password(username, site, account_username, account_password)
+    save_password(username, site, account_username, account_password, custom_code)
     flash('Password saved successfully!')
     return redirect(url_for('dashboard'))
 
@@ -242,6 +252,19 @@ def edit_password(index):
     site = request.form.get('site')
     account_username = request.form.get('account_username')
     account_password = request.form.get('account_password')
+    custom_code = request.form.get('custom_code')
+
+    if ' ' in account_username:
+        flash('Edited Username cannot contain spaces.')
+        return redirect(url_for('dashboard'))
+
+    if ' ' in account_password:
+        flash('Edited Password cannot contain spaces.')
+        return redirect(url_for('dashboard'))
+    
+    if ' ' in custom_code:
+        flash('Edited Code cannot contain spaces.')
+        return redirect(url_for('dashboard'))
 
     # Encrypt the new password
     encrypted_password = encrypt_password(account_password)
@@ -250,7 +273,7 @@ def edit_password(index):
     passwords = load_passwords(username)
 
     if 0 <= index < len(passwords):
-        passwords[index] = [site, account_username, encrypted_password]
+        passwords[index] = [site, account_username, encrypted_password, custom_code]
 
         # Save the updated password list back to the CSV file
         try:

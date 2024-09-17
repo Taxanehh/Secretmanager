@@ -44,12 +44,17 @@
                 <input type="text" name="site" placeholder="Description" required>
                 <input type="text" name="account_username" placeholder="Account Username" required>
                 <input type="password" name="account_password" placeholder="Account Password" required>
+                <input type="text" name="custom_code" placeholder="Custom Code" required>
                 <button type="submit">Save Password</button>
             </form>
             <!-- Search form -->
             <form method="POST" action="{{ url_for('dashboard') }}">
                 <input type="text" name="search_code" placeholder="Search by Code" required>
                 <button type="submit">Search</button>
+            </form>
+            <!-- Add the reload button to "undo" search (it just reloads the page) -->
+            <form method="GET" action="{{ url_for('dashboard') }}">
+                <button type="submit"><strong>&#8635;</strong></button>
             </form>
         </section>
 
@@ -63,7 +68,7 @@
                         <th>Description</th>
                         <th>Username</th>
                         <th>Password</th>
-                        <th>UUID</th>
+                        <th>UUID / Custom Code</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -95,6 +100,7 @@
                                 <input type="text" name="account_username" value="{{ password[1] }}" required>
                                 <!-- Input for editing password, initially blurred -->
                                 <input type="text" id="edit-password-{{ loop.index0 }}" name="account_password" required>
+                                <input type="text" name="custom_code" value="{{ password[3] }}" required>
                                 <button type="submit">Save</button>
                                 <button type="button" onclick="cancelEdit({{ loop.index0 }})">Cancel</button>
                             </form>
