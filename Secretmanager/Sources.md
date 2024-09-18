@@ -10,3 +10,4 @@
 - Fernet: https://cryptography.io/en/latest/fernet/
 - Overige python .csv kennis: vorige studie, Kunstmatige Intelligentie, Datascience vak
 - Explanation for random codes for secrets: https://stackoverflow.com/questions/534839/how-to-create-a-guid-uuid-in-python
+- "Python how to get date and time?": https://www.programiz.com/python-programming/datetime/current-datetime

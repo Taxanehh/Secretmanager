@@ -36,6 +36,11 @@
         {% endif %}
         {% endwith %}
 
+        <section class="login-info">
+            <h2>Dashboard</h2>
+            <p>Last login: {{ time_since_last_login }}</p> <!-- Display time since last login -->
+        </section>
+
         <!-- Section for adding a new password -->
         <section class="dashboard-form">
             <h2>Store a New Password</h2>
