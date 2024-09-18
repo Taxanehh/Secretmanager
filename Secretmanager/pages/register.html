@@ -42,6 +42,10 @@
     </header>
 
     <main class="form-section">
+        {% if qr_code_img %}
+            <h3>Scan this QR code with your 2FA app:</h3>
+            <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code">
+        {% endif %}
         <!-- standard script for flashing warnings and messages-->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -52,6 +56,7 @@
           </ul>
         {% endif %}
         {% endwith %}
+        <a href="{{ url_for('two_factor_auth') }}">Refresh QR Code</a>
         <h2>Register</h2>
 
         <section class="registration-guide">

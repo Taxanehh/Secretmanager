@@ -19,6 +19,11 @@ import os
 # CSV reading utilities
 import csv
 
+import pyotp
+import qrcode
+from io import BytesIO
+import base64
+
 app = Flask(__name__, template_folder='pages', static_folder='static')
 bcrypt = Bcrypt(app)
 app.secret_key = 'paulus'
@@ -37,11 +42,11 @@ def index():
     return render_template('index.html')
 
 # Save new user to CSV
-def save_user(name, username, password_hash):
+def save_user(name, username, password_hash, totp_secret):
     try:
         with open(USER_DATA_FILE, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([name, username, password_hash, ""]) # Creates 3 rows in our csv: the real name, username and hashed password
+            writer.writerow([name, username, password_hash, totp_secret])  # 4 rows in the csv file
     except Exception as e:
         print(f"Error saving user: {e}")
 
@@ -175,10 +180,31 @@ def register():
             flash('Passwords do not match.')
         else:
             password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-            save_user(name, username, password_hash)
-            flash('Registration complete! Please log in.')
+            totp_secret = pyotp.random_base32()
+            save_user(name, username, password_hash, totp_secret)
+            # Generate QR code for user to scan
+            totp_uri = pyotp.TOTP(totp_secret).provisioning_uri(username, issuer_name="SecretManager")
+            qr = qrcode.make(totp_uri)
+            buffered = BytesIO()
+            qr.save(buffered, format="PNG")
+            qr_code_img = base64.b64encode(buffered.getvalue()).decode()
+
+            flash('Registration complete! Scan this QR code with your 2FA app.')
+            return render_template('register.html', qr_code_img=qr_code_img)
     
     return render_template('register.html')
+
+# Load user data including the TOTP secret
+def get_user_data(username):
+    try:
+        with open(USER_DATA_FILE, mode='r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[1] == username:
+                    return row  # Return full user row
+    except FileNotFoundError:
+        pass
+    return None
 
 # Login mechanism
 @app.route('/login', methods=['GET', 'POST'])
@@ -187,22 +213,38 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        is_valid, last_login_time = validate_login(username, password)
-        if is_valid:
+        user_data = get_user_data(username)
+        if user_data and bcrypt.check_password_hash(user_data[2], password):
             session['username'] = username
-            session['last_login_time'] = last_login_time  # Store the last login time in session
-            return redirect(url_for('dashboard'))  # Redirect correctly to the dashboard
-        else:
-            flash('Invalid login credentials.') # No invalid password / username! for security reasons :)
+            session['totp_secret'] = user_data[3]  # Save TOTP secret to session
+            return redirect(url_for('verify_2fa'))  # Redirect to 2FA verification
 
-    return render_template('login.html')  # This should render the login page
+        flash('Invalid login credentials.')
+    return render_template('login.html')
+
+@app.route('/verify_2fa', methods=['GET', 'POST'])
+def verify_2fa():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        otp = request.form.get('otp')
+        totp_secret = session.get('totp_secret')
+
+        if pyotp.TOTP(totp_secret).verify(otp):
+            session['2fa_verified'] = True
+            return redirect(url_for('dashboard'))
+
+        flash('Invalid OTP. Please try again.')
+
+    return render_template('2fa.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     username = session.get('username')
     last_login_time = session.get('last_login_time')
 
-    if not username:
+    if not username or not session.get('2fa_verified'):
         return redirect(url_for('login'))  # Redirect if not logged in
 
     # Calculate the time difference from the last login, if it exists

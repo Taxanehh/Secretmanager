@@ -42,8 +42,10 @@ in pieces with what I have built up until now.
 ~~ Create backend for registration (think of some security vulnerabilities) ~~
 ~~ Create backend for login ~~
 ~~ Create dashboard with all features ~~
+~~ 2FA ~~
 Look through HvA code rules
-Gather security vulnerabilities and other (see app.py)
+Gather security vulnerabilities
 Maybe different colors for edit / save / delete button?
-Check for blur removal vulnerability, XSS Test, 2FA, HTTPS, better UI? maybe footer fix, looks nice now though
+Check for blur removal vulnerability, XSS Test, HTTPS, better UI? 
+maybe footer fix, looks nice now though
 ~~ Update: need to implement duration in between logins ~~

@@ -1,0 +1,40 @@
+<!-- Paul Stokreef -->
+ <!-- Secretmanager Assignment -->
+
+<!-- Declare document type -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Declare ASCII use, page size, URL Title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSS - Protect, Store, Succeed</title>
+    <!-- Link to stylesheet for app.py / Flask / Jinja -->
+    <link rel="stylesheet" 
+        href="{{ url_for('static', filename='styles/globals.css') }}">
+    <script defer 
+        src="{{ url_for('static', filename='scripts/main.js') }}">
+    </script>
+    <!-- Logo in URL tab -->    
+    <link rel="icon" href="../static/public/logo.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="two-factor-container">
+    <h2>Two-Factor Authentication (2FA)</h2>
+    <form method="POST" action="{{ url_for('verify_2fa') }}">
+        <input type="text" name="otp" placeholder="Enter your OTP" required>
+        <button type="submit">Verify</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% endwith %}
+  </div>
+</body>
+</html>

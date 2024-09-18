@@ -13,3 +13,6 @@
 - "Python how to get date and time?": https://www.programiz.com/python-programming/datetime/current-datetime
 - Filter method research 1: https://www.w3schools.com/howto/howto_js_filter_lists.asp
 - Filter method research 2: https://stackoverflow.com/questions/65565093/styling-django-filter-form-in-html
+- PyOTP research 1: https://pypi.org/project/pyotp/
+- PyOTP research 2: https://pyauth.github.io/pyotp/
+- PyOTP research 3: https://snyk.io/advisor/python/pyotp/example
