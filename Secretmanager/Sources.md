@@ -11,3 +11,5 @@
 - Overige python .csv kennis: vorige studie, Kunstmatige Intelligentie, Datascience vak
 - Explanation for random codes for secrets: https://stackoverflow.com/questions/534839/how-to-create-a-guid-uuid-in-python
 - "Python how to get date and time?": https://www.programiz.com/python-programming/datetime/current-datetime
+- Filter method research 1: https://www.w3schools.com/howto/howto_js_filter_lists.asp
+- Filter method research 2: https://stackoverflow.com/questions/65565093/styling-django-filter-form-in-html

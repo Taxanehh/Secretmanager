@@ -45,5 +45,5 @@ in pieces with what I have built up until now.
 Look through HvA code rules
 Gather security vulnerabilities and other (see app.py)
 Maybe different colors for edit / save / delete button?
-To be implemented: check for blur removal vulnerability, XSS / SQL Test, 2FA, HTTPS, Selecting secrets, better UI? maybe footer fix, looks nice now though
-Update: need to implement duration in between logins
+Check for blur removal vulnerability, XSS Test, 2FA, HTTPS, better UI? maybe footer fix, looks nice now though
+~~ Update: need to implement duration in between logins ~~
