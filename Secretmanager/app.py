@@ -61,37 +61,54 @@ def is_username_taken(username):
     return False
 
 # Make sure the login is valid by scanning the file
+# Update validate_login to return both the login status and the last login time
 def validate_login(username, password):
+    rows = []
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Get the current time
+    last_login_time = None  # Initialize as None for new users
+
     try:
-        rows = []
-        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         with open(USER_DATA_FILE, mode='r') as file:
             reader = csv.reader(file)
             for row in reader:
-                if row[1] == username: # Scrapped row length check, since more and more get added
-                    if bcrypt.check_password_hash(row[2], password):
-                        # Store previous login time
-                        last_login_time = row[3] if row[3] else None
+                # Make sure the row has at least 3 fields (name, username, password hash)
+                if len(row) < 3:
+                    continue
 
-                        # Update last_login_time to current time
-                        row[3] = current_time
+                # If the username matches, validate the password
+                if row[1] == username:
+                    if bcrypt.check_password_hash(row[2], password):
+                        # If there's a last login time, fetch it (handle the case where the last login field might not exist)
+                        if len(row) > 3:
+                            last_login_time = row[3]
+                        
+                        # Update the last login time to the current time
+                        row[3] = current_time  # Update with the new login time
+
+                        # Save this updated row for writing later
                         rows.append(row)
 
-                        # Return success with the last login time
+                        # Write the updated rows back to the CSV
+                        update_user_last_login(rows)
+
+                        # Return True (valid login) and the last login time
                         return True, last_login_time
-                rows.append(row)
+
+                rows.append(row)  # Append unmodified rows for writing later
+
     except FileNotFoundError:
         print("User data file not found.")
     except Exception as e:
         print(f"Error reading user data: {e}")
-    return False
 
-# Save the updated rows with the new login time
+    return False, None  # Return False if login is invalid
+
+# Function to update the CSV with the new last login time
 def update_user_last_login(rows):
     try:
         with open(USER_DATA_FILE, mode='w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerows(rows)
+            writer.writerows(rows)  # Write all rows, including updated login times
     except Exception as e:
         print(f"Error updating user data: {e}")
 
@@ -174,10 +191,9 @@ def login():
         password = request.form.get('password')
 
         is_valid, last_login_time = validate_login(username, password)
-        if is_valid and username and password and validate_login(username, password):
+        if is_valid:
             session['username'] = username
             session['last_login_time'] = last_login_time  # Store the last login time in session
-            update_user_last_login()
             return redirect(url_for('dashboard'))  # Redirect correctly to the dashboard
         else:
             flash('Invalid login credentials.') # No invalid password / username! for security reasons :)
@@ -187,29 +203,25 @@ def login():
 @app.route('/dashboard', methods=['GET']) # Scrapped POST; scrapped UUID
 def dashboard():
     username = session.get('username')
-    if not username:
-        return redirect(url_for('login'))  # Ensure only logged-in users can access the dashboard
-    
     last_login_time = session.get('last_login_time')
 
+    if not username:
+        return redirect(url_for('login'))  # Redirect if not logged in
+
+    # Calculate the time difference from the last login, if it exists
     if last_login_time:
-        # Calculate the time difference between now and the last login
         last_login_dt = datetime.strptime(last_login_time, '%Y-%m-%d %H:%M:%S')
         current_time = datetime.now()
-        time_diff = current_time - last_login_dt
+        time_difference = current_time - last_login_dt
 
-        days = time_diff.days
-        hours, remainder = divmod(time_diff.seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
+        # Convert the time difference to days, hours, and minutes
+        days = time_difference.days
+        hours, remainder = divmod(time_difference.seconds, 3600)
+        minutes, _ = divmod(remainder, 60)
 
-        if days > 0:
-            time_since_last_login = f"{days} days, {hours} hours, and {minutes} minutes ago"
-        elif hours > 0:
-            time_since_last_login = f"{hours} hours and {minutes} minutes ago"
-        else:
-            time_since_last_login = f"{minutes} minutes ago"
+        login_message = f"Last login was {days} days, {hours} hours, and {minutes} minutes ago."
     else:
-        time_since_last_login = "Welcome, you've logged in for the first time!"
+        login_message = "Welcome, you've logged in for the first time!"
 
     # Pagination logic
     page = request.args.get('page', 1, type=int)  # Get the page number from the URL, default is page 1
@@ -231,7 +243,7 @@ def dashboard():
         passwords=passwords_on_page, 
         page=page, 
         total_pages=total_pages,
-        time_since_last_login=time_since_last_login
+        login_message=login_message
     )
 
 # Separate route to handle adding passwords without interfering with viewing
