@@ -40,37 +40,6 @@
             <p>{{ login_message }}</p>
         </section>
 
-        <!-- Filter form at the top of the page -->
-        <form id="filter-form" method="GET" action="{{ url_for('dashboard') }}">
-            <div>
-                <label for="filter_code">Filter by Code:</label>
-                <input type="text" id="filter_code" name="filter_code" value="{{ request.args.get('filter_code', '') }}">
-            </div>
-            <div>
-                <label for="filter_description">Filter by Description:</label>
-                <input type="text" id="filter_description" name="filter_description" value="{{ request.args.get('filter_description', '') }}">
-            </div>
-            <button type="submit">Apply Filters</button>
-        </form>
-
-        <!-- Secrets table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for secret in secrets %}
-                <tr>
-                    <td>{{ secret[0] }}</td>  <!-- Code -->
-                    <td>{{ secret[1] }}</td>  <!-- Description -->
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
         <!-- Section for adding a new password -->
         <section class="dashboard-form">
             <h2>Store a New Password</h2>
@@ -82,9 +51,15 @@
                 <input type="text" name="custom_code" placeholder="Custom Code" required>
                 <button type="submit">Save Password</button>
             </form>
-            <!-- Search form -->
-            <form method="POST" action="{{ url_for('dashboard') }}">
+            <!-- Search Code form -->
+            <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
                 <input type="text" name="search_code" placeholder="Search by Code" required>
+                <button type="submit">Search</button>
+            </form>
+            <!-- Search Description form-->
+            <!-- Search Description form -->
+            <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
+                <input type="text" name="search_description" placeholder="Search by Description" required>
                 <button type="submit">Search</button>
             </form>
             <!-- Add the reload button to "undo" search (it just reloads the page) -->

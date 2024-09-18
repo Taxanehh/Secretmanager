@@ -197,7 +197,7 @@ def login():
 
     return render_template('login.html')  # This should render the login page
 
-@app.route('/dashboard', methods=['GET']) # Scrapped POST; scrapped UUID
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     username = session.get('username')
     last_login_time = session.get('last_login_time')
@@ -230,6 +230,10 @@ def dashboard():
         search_code = request.form.get('search_code')
         if search_code:
             passwords = [pw for pw in passwords if pw[3] == search_code]  # Filter by the unique code
+    # Then we copy paste it exactly for the search by description ;):
+        username = request.form.get('search_description') # username = description, too lazy to edit
+        if username:
+            passwords = [pw for pw in passwords if pw[3] == username]  # Filter by the description
 
     # Calculate total pages and get the slice of passwords for the current page
     total_pages = (len(passwords) + per_page - 1) // per_page  # Ceiling division to calculate total pages
