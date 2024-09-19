@@ -18,11 +18,16 @@ from datetime import datetime
 import os
 # CSV reading utilities
 import csv
-
+# PyOTP for generating 2FA codes
 import pyotp
+# QR Code for generating authenticator QR code
 import qrcode
+# BytesIO to create a "virtual file" to handle QR PNG
 from io import BytesIO
+# Base64 to decode PNG value and show it
 import base64
+# Import for more specific typestirngs
+from typing import Tuple, List, Optional
 
 app = Flask(__name__, template_folder='pages', static_folder='static')
 bcrypt = Bcrypt(app)
@@ -38,11 +43,26 @@ PASSWORD_DATA_FILE = os.path.join(os.path.dirname(__file__), 'passwords.csv')
 
 # Main page: say the url has nothing after the /, get directed to index.html
 @app.route('/')
-def index():
+def index() -> str:
+    """
+    Render the main index page.
+
+    Returns:
+        str: The rendered index.html page.
+    """
     return render_template('index.html')
 
 # Save new user to CSV
-def save_user(name, username, password_hash, totp_secret):
+def save_user(name: str, username: str, password_hash: str, totp_secret: str) -> None:
+    """
+    Save a new user to the USER_DATA_FILE (users.csv).
+
+    Args:
+        name: The name of the user.
+        username: The unique username of the user.
+        password_hash: The hashed password of the user.
+        totp_secret: The TOTP secret for 2FA.
+    """
     try:
         with open(USER_DATA_FILE, mode='a', newline='') as file:
             writer = csv.writer(file)
@@ -52,7 +72,16 @@ def save_user(name, username, password_hash, totp_secret):
         print(f"Error saving user: {e}")
 
 # Check if the username already exists
-def is_username_taken(username):
+def is_username_taken(username: str) -> bool:
+    """
+    Check if the provided username is already taken.
+
+    Args:
+        username: The username to check.
+
+    Returns:
+        bool: True if the username is taken, False otherwise.
+    """
     try:
         with open(USER_DATA_FILE, mode='r') as file:
             reader = csv.reader(file)
@@ -65,7 +94,17 @@ def is_username_taken(username):
 
 # Make sure the login is valid by scanning the file
 # Update validate_login to return both the login status and the last login time
-def validate_login(username, password):
+def validate_login(username: str, password: str) -> Tuple[bool, Optional[str]]:
+    """
+    Validate the user's login credentials and update their last login time.
+
+    Args:
+        username (str): The username of the user.
+        password (str): The user's password.
+
+    Returns:
+        Tuple[bool, Optional[str]]: Tuple containing a boolean for valid login and the last login time or None.
+    """
     rows = []
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Get the current time
     last_login_time = None  # Initialize as None for new users
@@ -106,7 +145,14 @@ def validate_login(username, password):
     return False, None  # Return False if login is invalid
 
 # Function to update the CSV with the new last login time
-def update_user_last_login(rows):
+def update_user_last_login(rows: List[List[str]]) -> None:
+    """
+    Update the CSV file with the modified rows, including updated login times.
+
+    Args:
+        rows: The modified rows with updated login times.
+        (A list that consists of lists with strings)
+    """
     try:
         with open(USER_DATA_FILE, mode='w', newline='') as file:
             writer = csv.writer(file)
@@ -115,15 +161,43 @@ def update_user_last_login(rows):
         print(f"Error updating user data: {e}")
 
 # Encrypt password before saving
-def encrypt_password(plain_password):
+def encrypt_password(plain_password: str) -> str:
+    """
+    Encrypt a plaintext password using Fernet encryption.
+
+    Args:
+        plain_password: The plaintext password.
+
+    Returns:
+        str: The encrypted password.
+    """
     return cipher.encrypt(plain_password.encode()).decode()
 
 # Decrypt password for viewing
-def decrypt_password(encrypted_password):
+def decrypt_password(encrypted_password: str) -> str:
+    """
+    Decrypt an encrypted password using Fernet decryption.
+
+    Args:
+        encrypted_password: The encrypted password.
+
+    Returns:
+        str: The decrypted password.
+    """
     return cipher.decrypt(encrypted_password.encode()).decode()
 
 # Save the password along with the associated username
-def save_password(username, site, account_username, account_password, custom_code):
+def save_password(username: str, site: str, account_username: str, account_password: str, custom_code: str) -> None:
+    """
+    Save the password along with the username, site, account username, and custom code.
+
+    Args:
+        username: The users username (or technically the description :) ).
+        site: The website or description for the password.
+        account_username: The account username associated with the password.
+        account_password: The plaintext password.
+        custom_code: The custom code associated with the password.
+    """
     encrypted_password = encrypt_password(account_password)
     try:
         with open(PASSWORD_DATA_FILE, mode='a', newline='') as file:
@@ -133,7 +207,16 @@ def save_password(username, site, account_username, account_password, custom_cod
         print(f"Error saving password: {e}")
 
 # Load passwords filtered by the logged-in username
-def load_passwords(username):
+def load_passwords(username: str) -> List[List[str]]:
+    """
+    Load the passwords associated with the logged-in user.
+
+    Args:
+        username: The logged-in username.
+
+    Returns:
+        List[List[str]]: A list of passwords and associated details.
+    """
     passwords = []
     try:
         with open(PASSWORD_DATA_FILE, mode='r') as file:
@@ -152,7 +235,13 @@ def load_passwords(username):
 
 # Register mechanism
 @app.route('/register', methods=['GET', 'POST'])
-def register():
+def register() -> str:
+    """
+    Handle the user registration process. Validate inputs, check for spaces, generate TOTP secret, and render QR code.
+
+    Returns:
+        str: The rendered register page.
+    """
     # Gather the info put in the form
     if request.method == 'POST':
         name = request.form.get('name')
@@ -195,7 +284,16 @@ def register():
     return render_template('register.html')
 
 # Load user data including the TOTP secret
-def get_user_data(username):
+def get_user_data(username: str) -> Optional[List[str]]:
+    """
+    Load the user data from the CSV file based on the provided username.
+
+    Args:
+        username: The username of the user.
+
+    Returns:
+        Optional[List[str]]: A list of user data if found, or None if the user does not exist.
+    """
     try:
         with open(USER_DATA_FILE, mode='r') as file:
             reader = csv.reader(file)
@@ -208,7 +306,13 @@ def get_user_data(username):
 
 # Login mechanism
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login() -> str:
+    """
+    Handle the user login process. Validate credentials and redirect to 2FA verification if valid.
+
+    Returns:
+        str: The rendered login page or a redirect to the 2FA verification page.
+    """
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -225,7 +329,13 @@ def login():
 
 
 @app.route('/verify_2fa', methods=['GET', 'POST'])
-def verify_2fa():
+def verify_2fa() -> str:
+    """
+    Handle 2FA verification for logged-in users.
+
+    Returns:
+        str: The rendered 2FA verification page or a redirect to the dashboard upon successful verification.
+    """
     if 'username' not in session:
         return redirect(url_for('login'))
 
@@ -242,7 +352,13 @@ def verify_2fa():
     return render_template('2fa.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
-def dashboard():
+def dashboard() -> str:
+    """
+    Render the user dashboard, display login history, and handle password search and pagination.
+
+    Returns:
+        str: The rendered dashboard page with user-specific information.
+    """
     username = session.get('username')
     last_login_time = session.get('last_login_time')
 
@@ -295,7 +411,13 @@ def dashboard():
 
 # Separate route to handle adding passwords without interfering with viewing
 @app.route('/add_password', methods=['POST'])
-def add_password():
+def add_password() -> str:
+    """
+    Add a new password for the logged-in user after validating input fields.
+
+    Returns:
+        str: Redirect to the dashboard after successfully saving the password.
+    """
     username = session.get('username')
     if not username:
         return redirect(url_for('login'))  # Ensure only logged-in users can add passwords
@@ -327,7 +449,13 @@ def add_password():
 # This is to prevent the URL from switching to dashboard/1 , ../2 etc
 # (Huge thanks to my little brother for the tip!)
 @app.route('/api/decrypt_password', methods=['POST'])
-def api_decrypt_password():
+def api_decrypt_password() -> Tuple[dict, int]:
+    """
+    API route to decrypt a password for the logged-in user based on the provided index.
+
+    Returns:
+        Tuple[dict, int]: A JSON response containing the decrypted password or an error message.
+    """
     username = session.get('username')
     if not username:
         return {'error': 'Not logged in'}, 401
@@ -345,7 +473,16 @@ def api_decrypt_password():
     return {'error': 'Invalid password index'}, 400
 
 @app.route('/edit_password/<int:index>', methods=['POST'])
-def edit_password(index):
+def edit_password(index: int) -> str:
+    """
+    Edit an existing password for the logged-in user based on the provided index.
+
+    Args:
+        index: The index of the password to edit.
+
+    Returns:
+        str: Redirect to the dashboard after successfully updating the password.
+    """
     # As you see, each command checks for session legitimacy
     username = session.get('username')
     if not username:
@@ -392,7 +529,16 @@ def edit_password(index):
 
 # New route to handle deleting a password
 @app.route('/delete_password/<int:index>', methods=['POST'])
-def delete_password(index):
+def delete_password(index: int) -> str:
+    """
+    Delete a password for the logged-in user based on the provided index.
+
+    Args:
+        index: The index of the password to delete.
+
+    Returns:
+        str: Redirect to the dashboard after successfully deleting the password.
+    """
     username = session.get('username')
     if not username:
         return redirect(url_for('login'))
@@ -414,7 +560,13 @@ def delete_password(index):
     return redirect(url_for('dashboard'))
 
 @app.route('/logout')
-def logout():
+def logout() -> str:
+    """
+    Log the user out by 'popping' or clearing their session.
+
+    Returns:
+        str: Redirect to the index page after successful logout.
+    """
     # If a user tries to put /logout in the url, check for session
     if 'username' in session:
         session.pop('username', None)
@@ -425,11 +577,23 @@ def logout():
         return redirect(url_for('index'))
 
 @app.route('/contact')
-def contact():
+def contact() -> str:
+    """
+    Render the contact page.
+
+    Returns:
+        str: The rendered contact.html page.
+    """
     return render_template('contact.html')
 
 @app.route('/about')
-def about():
+def about() -> str:
+    """
+    Render the about page.
+
+    Returns:
+        str: The rendered about.html page.
+    """
     return render_template('about.html')
 
 if __name__ == '__main__':

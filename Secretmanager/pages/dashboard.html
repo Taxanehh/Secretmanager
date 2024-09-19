@@ -1,5 +1,5 @@
 <!-- Paul Stokreef -->
- <!-- Secretmanager Assignment -->
+<!-- Secretmanager Assignment -->
 <!-- The template works with the errors! -->
 
 <!-- Declare document type -->
@@ -13,7 +13,7 @@
     <!-- Link to stylesheet for app.py / Flask / Jinja -->
     <link rel="stylesheet" 
         href="{{ url_for('static', filename='styles/globals.css') }}">
-    <!-- Logo in URL tab -->    
+    <!-- Logo in URL tab -->
     <link rel="icon" href="../static/public/logo.ico" type="image/x-icon">
 </head>
 <body>
@@ -22,7 +22,7 @@
         <!-- Dashboard header with a welcome message and logout button -->
         <header class="dashboard-header">
             <h2>Welcome to Your Dashboard, {{ session['username'] }}</h2>
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('logout') }}" aria-label="Logout">Logout</a>
         </header>
 
         <!-- Display flash messages (success, error, etc.) -->
@@ -36,102 +36,121 @@
         {% endif %}
         {% endwith %}
 
-        <section class="login-info">
-            <p>{{ login_message }}</p>
-        </section>
+        <!-- Main content wrapper -->
+        <main>
+            <section class="login-info">
+                <p>{{ login_message }}</p>
+            </section>
 
-        <!-- Section for adding a new password -->
-        <section class="dashboard-form">
-            <h2>Store a New Password</h2>
-            <!-- Form to add new password (website, username, password) -->
-            <form method="POST" action="{{ url_for('add_password') }}">
-                <input type="text" name="site" placeholder="Description" required>
-                <input type="text" name="account_username" placeholder="Account Username" required>
-                <input type="password" name="account_password" placeholder="Account Password" required>
-                <input type="text" name="custom_code" placeholder="Custom Code" required>
-                <button type="submit">Save Password</button>
-            </form>
-            <!-- Search Code form -->
-            <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
-                <input type="text" name="search_code" placeholder="Search by Code" required>
-                <button type="submit">Search</button>
-            </form>
-            <!-- Search Description form -->
-            <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
-                <input type="text" name="search_description" placeholder="Search by Description" required>
-                <button type="submit">Search</button>
-            </form>
-            <!-- Add the reload button to "undo" search (it just reloads the page) -->
-            <form method="GET" action="{{ url_for('dashboard') }}">
-                <button type="submit"><strong>&#8635;</strong></button>
-            </form>
-        </section>
+            <!-- Section for adding a new password -->
+            <section class="dashboard-form">
+                <h2>Store a New Password</h2>
+                <!-- Form to add new password (website, username, password) -->
+                <form method="POST" action="{{ url_for('add_password') }}">
+                    <input type="text" id="site" name="site" placeholder="Description" required>
+                    
+                    <input type="text" id="account_username" name="account_username" placeholder="Account Username" required>
+                    
+                    <input type="password" id="account_password" name="account_password" placeholder="Account Password" required>
+                    
+                    <input type="text" id="custom_code" name="custom_code" placeholder="Custom Code" required>
+                    
+                    <button type="submit">Save Password</button>
+                </form>
 
-        <!-- Section for displaying saved passwords with pagination -->
-        <section class="password-list">
-            <h2>Saved Passwords (Page {{ page }})</h2>
-            <table>
-                <thead>
-                    <!-- Table headers: Website, Username, Password, Actions -->
-                    <tr>
-                        <th>Description</th>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>UUID / Custom Code</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Loop to display each saved password -->
-                    {% for password in passwords %}
-                    <tr>
-                        <!-- Note: [0] means 1st item in index!! Learned that at Uni, note to self -->
-                        <td>{{ password[0] }}</td>
-                        <td>{{ password[1] }}</td>
-                        <!-- Password is initially blurred for security reasons, though I have to check security -->
-                        <td class="password-cell blurred" id="password-{{ loop.index0 }}">{{ password[2] }}</td>
-                        <td>{{ password[3] }}</td> <!-- Display the unique code -->
-                        <td>
-                            <!-- Buttons for showing/hiding, editing, and deleting passwords -->
-                            <button id="toggle-btn-{{ loop.index0 }}" onclick="togglePassword({{ loop.index0 }})">Show</button>
-                            <button id="edit-btn-{{ loop.index0 }}" onclick="editPassword({{ loop.index0 }})">Edit</button>
-                            <form action="{{ url_for('delete_password', index=loop.index0) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <!-- Hidden form for editing a password -->
-                    <tr id="edit-form-{{ loop.index0 }}" style="display: none;">
-                        <td colspan="4">
-                            <!-- Form for editing password data-->
-                            <form id="edit-form-actual-{{ loop.index0 }}" action="{{ url_for('edit_password', index=loop.index0) }}" method="POST">
-                                <input type="text" name="site" value="{{ password[0] }}" required>
-                                <input type="text" name="account_username" value="{{ password[1] }}" required>
-                                <!-- Input for editing password, initially blurred -->
-                                <input type="text" id="edit-password-{{ loop.index0 }}" name="account_password" required>
-                                <input type="text" name="custom_code" value="{{ password[3] }}" required>
-                                <button type="submit">Save</button>
-                                <button type="button" onclick="cancelEdit({{ loop.index0 }})">Cancel</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
+                <!-- Search Code form -->
+                <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
+                    <input type="text" id="search_code" name="search_code" placeholder="Search by Code" required>
+                    <button type="submit">Search</button>
+                </form>
 
-        <!-- Pagination controls for navigating between pages of saved passwords -->
-        <div class="pagination-controls">
-            <!-- Show previous button if not on the first page -->
-            {% if page > 1 %}
-                <a href="{{ url_for('dashboard', page=page-1) }}">Previous</a>
-            {% endif %}
+                <!-- Search Description form -->
+                <form method="POST" action="{{ url_for('dashboard') }}" class="search-form">
+                    <input type="text" id="search_description" name="search_description" placeholder="Search by Description" required>
+                    <button type="submit">Search</button>
+                </form>
 
-            <!-- Show next button if there are more pages -->
-            {% if page < total_pages %}
-                <a href="{{ url_for('dashboard', page=page+1) }}">Next</a>
-            {% endif %}
-        </div>
+                <!-- Add the reload button to "undo" search (it just reloads the page) -->
+                <form method="GET" action="{{ url_for('dashboard') }}">
+                    <button type="submit" aria-label="Reload Page">
+                        <strong>&#8635;</strong>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Section for displaying saved passwords with pagination -->
+            <section class="password-list">
+                <h2>Saved Passwords (Page {{ page }})</h2>
+                <table>
+                    <thead>
+                        <!-- Table headers: Website, Username, Password, Actions -->
+                        <tr>
+                            <th>Description</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>UUID / Custom Code</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Loop to display each saved password -->
+                        {% for password in passwords %}
+                        <tr>
+                            <!-- Note: [0] means 1st item in index!! Learned that at Uni, note to self -->
+                            <td>{{ password[0] }}</td>
+                            <td>{{ password[1] }}</td>
+                            <!-- Password is initially blurred for security reasons, though I have to check security -->
+                            <td class="password-cell blurred" id="password-{{ loop.index0 }}">{{ password[2] }}</td>
+                            <td>{{ password[3] }}</td> <!-- Display the unique code -->
+                            <td>
+                                <!-- Buttons for showing/hiding, editing, and deleting passwords -->
+                                <button id="toggle-btn-{{ loop.index0 }}" onclick="togglePassword({{ loop.index0 }})">Show</button>
+                                <button id="edit-btn-{{ loop.index0 }}" onclick="editPassword({{ loop.index0 }})">Edit</button>
+                                <form action="{{ url_for('delete_password', index=loop.index0) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Hidden form for editing a password -->
+                        <tr id="edit-form-{{ loop.index0 }}" style="display: none;">
+                            <td colspan="4">
+                                <!-- Form for editing password data-->
+                                <form id="edit-form-actual-{{ loop.index0 }}" action="{{ url_for('edit_password', index=loop.index0) }}" method="POST">
+                                    <label for="edit-site-{{ loop.index0 }}">Description:</label>
+                                    <input type="text" id="edit-site-{{ loop.index0 }}" name="site" value="{{ password[0] }}" required>
+
+                                    <label for="edit-account-{{ loop.index0 }}">Account Username:</label>
+                                    <input type="text" id="edit-account-{{ loop.index0 }}" name="account_username" value="{{ password[1] }}" required>
+
+                                    <label for="edit-password-{{ loop.index0 }}">Account Password:</label>
+                                    <input type="text" id="edit-password-{{ loop.index0 }}" name="account_password" required>
+
+                                    <label for="edit-custom-code-{{ loop.index0 }}">Custom Code:</label>
+                                    <input type="text" id="edit-custom-code-{{ loop.index0 }}" name="custom_code" value="{{ password[3] }}" required>
+
+                                    <button type="submit">Save</button>
+                                    <button type="button" onclick="cancelEdit({{ loop.index0 }})">Cancel</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Pagination controls for navigating between pages of saved passwords-->
+            <div class="pagination-controls">
+                <!-- Show previous button if not on the first page -->
+                {% if page > 1 %}
+                    <a href="{{ url_for('dashboard', page=page-1) }}">Previous</a>
+                {% endif %}
+
+                <!-- Show next button if there are more pages -->
+                {% if page < total_pages %}
+                    <a href="{{ url_for('dashboard', page=page+1) }}">Next</a>
+                {% endif %}
+            </div>
+        </main>
     </div>
 
     <!-- JavaScript for password visibility toggle and edit functionality -->
