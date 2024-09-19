@@ -43,7 +43,7 @@ in pieces with what I have built up until now.
 ~~ Create backend for login ~~
 ~~ Create dashboard with all features ~~
 ~~ 2FA ~~
-Look through HvA code rules
+~~ Look through HvA code rules ~~
 Gather security vulnerabilities
 Maybe different colors for edit / save / delete button?
 Check for blur removal vulnerability, XSS Test, HTTPS, better UI? 
