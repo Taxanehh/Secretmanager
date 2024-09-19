@@ -46,7 +46,8 @@ def save_user(name, username, password_hash, totp_secret):
     try:
         with open(USER_DATA_FILE, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([name, username, password_hash, totp_secret])  # 4 rows in the csv file
+            # Save with an empty last_login_time (4 rows total)
+            writer.writerow([name, username, password_hash, totp_secret, ''])
     except Exception as e:
         print(f"Error saving user: {e}")
 
@@ -73,19 +74,18 @@ def validate_login(username, password):
         with open(USER_DATA_FILE, mode='r') as file:
             reader = csv.reader(file)
             for row in reader:
-                # Make sure the row has at least 3 fields (name, username, password hash)
-                if len(row) < 3:
+                # Make sure the row has at least 4 fields (name, username, password hash, totp_secret)
+                if len(row) < 4:
                     continue
 
                 # If the username matches, validate the password
                 if row[1] == username:
                     if bcrypt.check_password_hash(row[2], password):
-                        # If there's a last login time, fetch it (handle the case where the last login field might not exist)
-                        if len(row) > 3:
-                            last_login_time = row[3]
+                        # Check if there's a last login time
+                        last_login_time = row[4] if len(row) > 4 and row[4] else None
                         
                         # Update the last login time to the current time
-                        row[3] = current_time  # Update with the new login time
+                        row[4] = current_time  # Update with the new login time
 
                         # Save this updated row for writing later
                         rows.append(row)
@@ -213,14 +213,16 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user_data = get_user_data(username)
-        if user_data and bcrypt.check_password_hash(user_data[2], password):
+        is_valid_login, last_login_time = validate_login(username, password)
+        if is_valid_login:
             session['username'] = username
-            session['totp_secret'] = user_data[3]  # Save TOTP secret to session
+            session['totp_secret'] = get_user_data(username)[3]  # Save TOTP secret to session
+            session['last_login_time'] = last_login_time  # Store last login time in session
             return redirect(url_for('verify_2fa'))  # Redirect to 2FA verification
 
         flash('Invalid login credentials.')
     return render_template('login.html')
+
 
 @app.route('/verify_2fa', methods=['GET', 'POST'])
 def verify_2fa():
@@ -247,8 +249,11 @@ def dashboard():
     if not username or not session.get('2fa_verified'):
         return redirect(url_for('login'))  # Redirect if not logged in
 
-    # Calculate the time difference from the last login, if it exists
-    if last_login_time:
+    # If it's the user's first login
+    if not last_login_time:
+        login_message = "Welcome, you've logged in for the first time!"
+    else:
+        # Calculate the time difference from the last login
         last_login_dt = datetime.strptime(last_login_time, '%Y-%m-%d %H:%M:%S')
         current_time = datetime.now()
         time_difference = current_time - last_login_dt
@@ -259,8 +264,6 @@ def dashboard():
         minutes, _ = divmod(remainder, 60)
 
         login_message = f"Last login was {days} days, {hours} hours, and {minutes} minutes ago."
-    else:
-        login_message = "Welcome, you've logged in for the first time!"
 
     # Pagination logic
     page = request.args.get('page', 1, type=int)  # Get the page number from the URL, default is page 1
@@ -272,10 +275,11 @@ def dashboard():
         search_code = request.form.get('search_code')
         if search_code:
             passwords = [pw for pw in passwords if pw[3] == search_code]  # Filter by the unique code
-    # Then we copy paste it exactly for the search by description ;):
-        username = request.form.get('search_description') # username = description, too lazy to edit
-        if username:
-            passwords = [pw for pw in passwords if pw[3] == username]  # Filter by the description
+
+    # Then we copy paste it exactly for the search by description ;)
+        search_description = request.form.get('search_description')
+        if search_description:
+            passwords = [pw for pw in passwords if pw[1] == search_description]  # Filter by the description
 
     # Calculate total pages and get the slice of passwords for the current page
     total_pages = (len(passwords) + per_page - 1) // per_page  # Ceiling division to calculate total pages

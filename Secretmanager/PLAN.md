@@ -28,7 +28,7 @@ in pieces with what I have built up until now.
 - ✓ Deleting secrets
 - ✓ Scrolling secrets
 - ✓ Loginpage validation
-- 2FA
+- ✓ 2FA
 - HTTPS
 - PEN test & SQL test
 - Website documentation
