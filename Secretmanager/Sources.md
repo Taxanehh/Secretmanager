@@ -16,3 +16,4 @@
 - PyOTP research 1: https://pypi.org/project/pyotp/
 - PyOTP research 2: https://pyauth.github.io/pyotp/
 - PyOTP research 3: https://snyk.io/advisor/python/pyotp/example
+- Nginx / OpenSSL: https://medium.com/@eng.fadishaar/step-by-step-guide-configuring-nginx-with-https-on-localhost-for-secure-web-application-testing-c78febc26c78
