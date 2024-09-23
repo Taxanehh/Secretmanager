@@ -1,0 +1,5 @@
+Flask
+flask-bcrypt
+cryptography
+pyotp
+qrcode
