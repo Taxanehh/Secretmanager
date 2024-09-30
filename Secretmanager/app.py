@@ -38,8 +38,8 @@ fernet_key = b'cVpK1oJHq5E4cK_pltia43Vr1GekwO4dA_UlLDK-xgM='
 cipher = Fernet(fernet_key)
 
 # Seperate .CSV files for user data and secrets data
-USER_DATA_FILE = os.path.join(os.path.dirname(__file__), 'users.csv')
-PASSWORD_DATA_FILE = os.path.join(os.path.dirname(__file__), 'passwords.csv')
+USER_DATA_FILE = os.path.join(os.path.dirname(__file__), 'csv/users.csv')
+PASSWORD_DATA_FILE = os.path.join(os.path.dirname(__file__), 'csv/passwords.csv')
 
 # Main page: say the url has nothing after the /, get directed to index.html
 @app.route('/')
