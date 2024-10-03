@@ -576,7 +576,7 @@ def logout() -> str:
         flash('You are not logged in')
         return redirect(url_for('index'))
 
-@app.route('/contact')
+@app.route('/contact', methods=(['POST', 'GET']))
 def contact() -> str:
     """
     Render the contact page.
@@ -584,6 +584,8 @@ def contact() -> str:
     Returns:
         str: The rendered contact.html page.
     """
+    if request.method == 'POST':
+        flash('We have recieved your message!')
     return render_template('contact.html')
 
 @app.route('/about')

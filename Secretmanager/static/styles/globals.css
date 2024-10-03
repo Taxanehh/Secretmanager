@@ -1,6 +1,9 @@
 /* Paul Stokreef */
 /* Secretmanager Assignment */
 
+/* Usage of Space Grotesk Font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap');
+
 /* General styles */
 :root {
     --primary-color: #9178ff;
@@ -8,13 +11,15 @@
     --background-color: #1c1c1c;
     --text-color: #fff;
     --accent-color: #a8a8a8;
-    --font-family: Arial, sans-serif;
+}
+
+* {
+    font-family: 'Space Grotesk', sans-serif;
 }
 
 body {
     margin: 0;
     padding: 0;
-    font-family: var(--font-family);
     background-color: var(--background-color);
     color: var(--text-color);
 }
@@ -66,7 +71,6 @@ nav {
 .nav-links a {
     text-decoration: none;
     color: var(--text-color);
-    font-size: 16px;
     transition: color 0.3s;
 }
 
@@ -76,12 +80,6 @@ nav {
 
 .logo img {
     height: 50px;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
 }
 
 .nav-links a {
@@ -96,6 +94,7 @@ nav {
 }
 
 /* Hero Section */
+
 .hero {
     display: flex;
     flex-direction: column;
@@ -103,7 +102,17 @@ nav {
     align-items: center;
     height: 770px;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
+    animation: fadeIn 3s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 
 .hero h2 {
@@ -120,6 +129,7 @@ nav {
     font-size: 1.2em;
     color: var(--accent-color);
     margin: 10px 0;
+    font-family: 'Space Grotesk', sans-serif;
 }
 
 .hero button {
@@ -131,6 +141,7 @@ nav {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-family: 'Space Grotesk', sans-serif;
 }
 
 .hero button:hover {
@@ -156,12 +167,12 @@ footer a:hover {
 
 /* Style the registration guide list */
 .registration-guide ul {
-    list-style-type: none; /* Removes the default bullet points */
-    padding-left: 0;   
+    list-style-type: none;
+    padding-left: 0;
 }
 
 .registration-guide li {
-    margin-bottom: 10px;   /* Adds some space between the list items */
+    margin-bottom: 10px;
 }
 
 .registration-guide strong {
@@ -190,7 +201,7 @@ footer a:hover {
     gap: 10px;
 }
 
-.form-section input, 
+.form-section input,
 .form-section textarea {
     padding: 12px;
     border: 1px solid var(--primary-color);
@@ -202,7 +213,7 @@ footer a:hover {
     transition: border-color 0.3s;
 }
 
-.form-section input:focus, 
+.form-section input:focus,
 .form-section textarea:focus {
     border-color: var(--secondary-color);
 }
@@ -245,23 +256,23 @@ footer a:hover {
     padding: 10px 20px;
     margin: 5px;
     border-radius: 5px;
-    background-color: #3498db; 
-    color: white; 
+    background-color: #3498db;
+    color: white;
     text-decoration: none;
     font-size: 14px;
-    transition: background-color 0.3s ease; 
+    transition: background-color 0.3s ease;
 }
 
 /* Hover effect */
 .pagination-controls a:hover {
-    background-color: #2980b9; 
+    background-color: #2980b9;
 }
 
 /* Disabled state for buttons */
 .pagination-controls a.disabled {
-    background-color: #bdc3c7; 
+    background-color: #bdc3c7;
     cursor: not-allowed;
-    pointer-events: none; 
+    pointer-events: none;
 }
 
 .dashboard-container {
@@ -305,7 +316,8 @@ table {
     color: var(--text-color);
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     border: 1px solid #333;
     text-align: left;
@@ -355,38 +367,40 @@ td {
     filter: blur(5px);
 }
 
-body {
-    font-family: Arial, sans-serif;
-}
-
 .password-list table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
+
 .password-list table th,
 .password-list table td {
     border: 1px solid #2c2c2c;
     padding: 8px;
     text-align: left;
 }
+
 .password-list table th {
     background-color: #2c2c2c;
     font-size: 16px;
 }
+
 .password-list table td {
     font-size: 14px;
 }
+
 .password-cell {
-    font-size: 12px; /* Smaller font for passwords */
-    max-width: 150px; /* Constrain the width of the password cell */
+    font-size: 12px;
+    max-width: 150px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis; /* Ensures long text is cut off nicely */
+    text-overflow: ellipsis;
 }
+
 .blurred {
     filter: blur(5px);
 }
+
 .password-list button {
     padding: 6px 10px;
     font-size: 14px;
@@ -396,12 +410,15 @@ body {
     border: none;
     border-radius: 4px;
 }
+
 .password-list button:hover {
     background-color: #0056b3;
 }
+
 .password-list form button {
     background-color: #9178ff;
 }
+
 .password-list form button:hover {
     background-color: #785bfa;
 }
@@ -467,6 +484,113 @@ body {
 }
 
 /* Responsive Design */
+
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
+
+    .dashboard-container {
+        max-width: 90%;
+    }
+
+    .dashboard-header h2 {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-header h2 {
+        font-size: 1.6em;
+    }
+
+    .dashboard-header a {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .dashboard-form {
+        flex-direction: column;
+    }
+
+    .dashboard-form input {
+        width: 100%;
+    }
+
+    .dashboard-form button {
+        width: 100%;
+    }
+
+    table,
+    th,
+    td {
+        display: block;
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 12px 10px;
+        text-align: right;
+    }
+
+    th {
+        background-color: #333;
+    }
+
+    td {
+        background-color: #252525;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+
+    .dashboard-header h2 {
+        font-size: 1.4em;
+    }
+
+    .dashboard-form input,
+    .dashboard-form button {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    table th,
+    table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+/* Responsive for Navigation and Other Elements */
 @media (max-width: 768px) {
     .nav-links {
         display: none;

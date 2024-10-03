@@ -30,8 +30,8 @@ in pieces with what I have built up until now.
 - ✓ Loginpage validation
 - ✓ 2FA
 - ✓ HTTPS
-- PEN test
-- Website documentation
+- ✓ PEN test
+- ✓ Website documentation
 
 # Currently doing
 
@@ -44,8 +44,5 @@ in pieces with what I have built up until now.
 ~~ Create dashboard with all features ~~
 ~~ 2FA ~~
 ~~ Look through HvA code rules ~~
-Gather security vulnerabilities
-Maybe different colors for edit / save / delete button?
-Check for blur removal vulnerability, XSS Test, HTTPS, better UI? 
-maybe footer fix, looks nice now though
+~~Gather security vulnerabilities~~
 ~~ Update: need to implement duration in between logins ~~
