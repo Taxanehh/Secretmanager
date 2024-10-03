@@ -2,7 +2,13 @@
 
 # Goal for the day
 
-Revamp responsiveness, seperate .py files, read the student manual, prepare for the upcoming sprint review
+Revamp responsiveness, read the student manual, prepare for the upcoming sprint review
 
 # Topics covered
+
+- Revamped Responsiveness
+- Read the student manual
+- added my logs
+- Made leeruitkomsten.md
+- Prepared for upcoming sprint review
 
