@@ -25,3 +25,5 @@
 - Python Code Conventies: https://knowledgebase.hbo-ict-hva.nl/1_beroepstaken/software/realiseren/code_conventies/taalspecifiek/code_conventies_python/
 - Google Maps API: https://www.w3schools.com/graphics/google_maps_intro.asp
 - JavaScript adding Red Markers: https://stackoverflow.com/questions/21712465/adding-red-marker-to-google-maps
+- JS Data- Attributes: https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+- Source for AJAX Code: https://www.w3schools.com/js/js_ajax_http_send.asp

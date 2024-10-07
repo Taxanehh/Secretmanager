@@ -95,6 +95,8 @@ TOTAAL AANTAL BEWIJS:
 - Ik heb geleerd om Scrum toe te passen tijdens een project.
 - Ik heb geleerd om mijn code te documenteren volgens industriestandaarden.
 
+Inspiratie? Alles heb ik zelf gedesigned en gemaakt. Vaak viel alles net zo dat ik het mooi vond.
+
 
 ---
 

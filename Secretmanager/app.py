@@ -96,7 +96,7 @@ def is_username_taken(username: str) -> bool:
 # Update validate_login to return both the login status and the last login time
 def validate_login(username: str, password: str) -> Tuple[bool, Optional[str]]:
     """
-    Validate the user's login credentials and update their last login time.
+    Validate the user's login credentials and update their last login time only on successful login.
 
     Args:
         username (str): The username of the user.
@@ -108,6 +108,7 @@ def validate_login(username: str, password: str) -> Tuple[bool, Optional[str]]:
     rows = []
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Get the current time
     last_login_time = None  # Initialize as None for new users
+    login_successful = False  # Track if login was successful
 
     try:
         with open(USER_DATA_FILE, mode='r') as file:
@@ -120,29 +121,26 @@ def validate_login(username: str, password: str) -> Tuple[bool, Optional[str]]:
                 # If the username matches, validate the password
                 if row[1] == username:
                     if bcrypt.check_password_hash(row[2], password):
-                        # Check if there's a last login time
+                        # Login is successful, proceed with updating last_login_time
+                        login_successful = True
                         last_login_time = row[4] if len(row) > 4 and row[4] else None
-                        
-                        # Update the last login time to the current time
                         row[4] = current_time  # Update with the new login time
+                    # Keep the row even if login failed, to not corrupt the CSV
+                rows.append(row)  # Append every row, modified or not
 
-                        # Save this updated row for writing later
-                        rows.append(row)
-
-                        # Write the updated rows back to the CSV
-                        update_user_last_login(rows)
-
-                        # Return True (valid login) and the last login time
-                        return True, last_login_time
-
-                rows.append(row)  # Append unmodified rows for writing later
+        # If the login is successful, update the CSV with the new login time
+        if login_successful:
+            update_user_last_login(rows)
+            return True, last_login_time
+        else:
+            return False, None  # Return False if login failed
 
     except FileNotFoundError:
         print("User data file not found.")
     except Exception as e:
         print(f"Error reading user data: {e}")
 
-    return False, None  # Return False if login is invalid
+    return False, None  # Return False if an error occurred
 
 # Function to update the CSV with the new last login time
 def update_user_last_login(rows: List[List[str]]) -> None:
@@ -336,16 +334,27 @@ def verify_2fa() -> str:
     Returns:
         str: The rendered 2FA verification page or a redirect to the dashboard upon successful verification.
     """
+
     if 'username' not in session:
         return redirect(url_for('login'))
+    
+    if session.get('2fa_verified'):
+        return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
         otp = request.form.get('otp')
         totp_secret = session.get('totp_secret')
 
+        if not totp_secret:
+            flash('2FA secret is missing. Please try logging in again.')
+            session.clear()
+            return redirect(url_for('login'))
+
         if pyotp.TOTP(totp_secret).verify(otp):
             session['2fa_verified'] = True
             return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid OTP. Please try again.')
 
         flash('Invalid OTP. Please try again.')
 
@@ -362,8 +371,14 @@ def dashboard() -> str:
     username = session.get('username')
     last_login_time = session.get('last_login_time')
 
-    if not username or not session.get('2fa_verified'):
-        return redirect(url_for('login'))  # Redirect if not logged in
+    if not username:
+        flash('Please log in first.')
+        return redirect(url_for('login'))
+    
+    if not session.get('2fa_verified'):
+        flash('Please complete 2FA verification to access the dashboard.')
+        return redirect(url_for('verify_2fa'))
+    
 
     # If it's the user's first login
     if not last_login_time:
@@ -452,6 +467,7 @@ def add_password() -> str:
 def api_decrypt_password() -> Tuple[dict, int]:
     """
     API route to decrypt a password for the logged-in user based on the provided index.
+    The API Code, or at least the relevant part, is in the togglePassword / editPassword functions 
 
     Returns:
         Tuple[dict, int]: A JSON response containing the decrypted password or an error message.
@@ -461,9 +477,15 @@ def api_decrypt_password() -> Tuple[dict, int]:
         return {'error': 'Not logged in'}, 401
 
     index = request.json.get('index')
+    
+    try:
+        index = int(index)
+    except (ValueError, TypeError):
+        return {'error': 'Invalid index type'}, 400
+
     passwords = load_passwords(username)
 
-    # gather the password and decrypt it, ready to show it
+    # Check if the index is within the valid range
     if 0 <= index < len(passwords):
         encrypted_password = passwords[index][2]
         decrypted_password = decrypt_password(encrypted_password)
@@ -569,6 +591,7 @@ def logout() -> str:
     """
     # If a user tries to put /logout in the url, check for session
     if 'username' in session:
+        session.clear()
         session.pop('username', None)
         flash('Logged out succesfully!')
         return redirect(url_for('index'))

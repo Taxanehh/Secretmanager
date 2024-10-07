@@ -22,7 +22,7 @@
   <div class="two-factor-container">
     <h2>Two-Factor Authentication (2FA)</h2>
     <form method="POST" action="{{ url_for('verify_2fa') }}">
-        <input type="text" name="otp" placeholder="Enter your OTP" required>
+        <input id= otpbox type="text" name="otp" placeholder="Enter your OTP" required>
         <button type="submit">Verify</button>
     </form>
 

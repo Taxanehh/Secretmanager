@@ -104,8 +104,8 @@
                             <td>{{ password[3] }}</td> <!-- Display the unique code -->
                             <td>
                                 <!-- Buttons for showing/hiding, editing, and deleting passwords -->
-                                <button id="toggle-btn-{{ loop.index0 }}" onclick="togglePassword({{ loop.index0 }})">Show</button>
-                                <button id="edit-btn-{{ loop.index0 }}" onclick="editPassword({{ loop.index0 }})">Edit</button>
+                                <button id="toggle-btn-{{ loop.index0 }}" type="button" data-index="{{ loop.index0 }}" onclick="togglePassword(this)">Show</button>
+                                <button id="edit-btn-{{ loop.index0 }}" type="button" data-index="{{ loop.index0 }}" onclick="editPassword(this)">Edit</button>
                                 <form action="{{ url_for('delete_password', index=loop.index0) }}" method="POST" style="display:inline;">
                                     <button type="submit" class="delete-btn">Delete</button>
                                 </form>
@@ -117,19 +117,19 @@
                                 <!-- Form for editing password data-->
                                 <form id="edit-form-actual-{{ loop.index0 }}" action="{{ url_for('edit_password', index=loop.index0) }}" method="POST">
                                     <label for="edit-site-{{ loop.index0 }}">Description:</label>
-                                    <input type="text" id="edit-site-{{ loop.index0 }}" name="site" value="{{ password[0] }}" required>
-
+                                    <input type="text" id="edit-site-{{ loop.index0 }}" name="site" value="{{ password[0] }}" class="edit-password-input" required>
+                        
                                     <label for="edit-account-{{ loop.index0 }}">Account Username:</label>
-                                    <input type="text" id="edit-account-{{ loop.index0 }}" name="account_username" value="{{ password[1] }}" required>
-
+                                    <input type="text" id="edit-account-{{ loop.index0 }}" name="account_username" value="{{ password[1] }}" class="edit-password-input" required>
+                        
                                     <label for="edit-password-{{ loop.index0 }}">Account Password:</label>
-                                    <input type="text" id="edit-password-{{ loop.index0 }}" name="account_password" required>
-
+                                    <input type="password" id="edit-password-{{ loop.index0 }}" name="account_password" class="edit-password-input" required>
+                        
                                     <label for="edit-custom-code-{{ loop.index0 }}">Custom Code:</label>
-                                    <input type="text" id="edit-custom-code-{{ loop.index0 }}" name="custom_code" value="{{ password[3] }}" required>
-
-                                    <button type="submit">Save</button>
-                                    <button type="button" onclick="cancelEdit({{ loop.index0 }})">Cancel</button>
+                                    <input type="text" id="edit-custom-code-{{ loop.index0 }}" name="custom_code" value="{{ password[3] }}" class="edit-password-input" required>
+                        
+                                    <button type="submit" class="edit-password-button">Save</button>
+                                    <button type="button" class="edit-password-button" data-index="{{ loop.index0 }}" onclick="cancelEdit(this)">Cancel</button>
                                 </form>
                             </td>
                         </tr>
@@ -155,10 +155,10 @@
 
     <!-- JavaScript for password visibility toggle and edit functionality -->
     <script>
-        // Function to toggle password visibility (Show/Hide)
-        function togglePassword(index) {
+        function togglePassword(button) {
+            const index = button.getAttribute('data-index');  // Extract index from data- attribute
             const passwordCell = document.getElementById(`password-${index}`);
-            const toggleBtn = document.getElementById(`toggle-btn-${index}`);
+            const toggleBtn = button;  // This is the button that called the function
 
             if (passwordCell.classList.contains('blurred')) {
                 fetch('/api/decrypt_password', {
@@ -183,8 +183,9 @@
             }
         }
 
-        // Function to show the edit form with all its stuff
-        function editPassword(index) {
+        // Function to show the edit form with decrypted password
+        function editPassword(button) {
+            const index = button.getAttribute('data-index');
             fetch('/api/decrypt_password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -201,8 +202,9 @@
             });
         }
 
-        // Function to cancel the edit operation
-        function cancelEdit(index) {
+        function cancelEdit(button) {
+            const index = button.getAttribute('data-index');
+            // Note to self: don't accidentally delete this function and wonder for hours why it doesn't work
             document.getElementById(`edit-form-${index}`).style.display = 'none';
         }
     </script>
