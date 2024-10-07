@@ -23,3 +23,5 @@
 - JS Code Conventies: https://knowledgebase.hbo-ict-hva.nl/1_beroepstaken/software/realiseren/code_conventies/taalspecifiek/code_conventies_javascript/
 - CSS Code Conventies: https://knowledgebase.hbo-ict-hva.nl/1_beroepstaken/software/realiseren/code_conventies/taalspecifiek/code_conventies_css/ 
 - Python Code Conventies: https://knowledgebase.hbo-ict-hva.nl/1_beroepstaken/software/realiseren/code_conventies/taalspecifiek/code_conventies_python/
+- Google Maps API: https://www.w3schools.com/graphics/google_maps_intro.asp
+- JavaScript adding Red Markers: https://stackoverflow.com/questions/21712465/adding-red-marker-to-google-maps

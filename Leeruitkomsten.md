@@ -1,6 +1,14 @@
 # Leeruitkomsten: Secret Manager Webapplicatie
 
 In deze leeruitkomsten.md toon ik hoe de ontwikkeling van mijn Secret Manager webapplicatie voldoet aan de gestelde leerdoelen. Hieronder wordt elke leeruitkomst besproken en onderbouwd met bewijs uit mijn werkproces en de GitLab-repository.
+
+TOTAAL AANTAL BEWIJS:
+- Sources.md
+- Leeruitkomsten.md
+- Logs
+- Technische documentatie
+- PLAN.md
+- Alle commits & Geschiedenis
 ---
 
 # SIDENOTE: Omdat ik graag zeker ben van mijn zaak, heb ik mijn bewijs op zoveel mogelijk manieren geprobeerd te laten zien. Belangrijkste voorbeelden: PLAN.md, SOURCES.md, progress.md files, Technical Documentation, README.md en uiteraard de 40+ commits en comments bij de commits in GitLab.
@@ -92,4 +100,4 @@ In deze leeruitkomsten.md toon ik hoe de ontwikkeling van mijn Secret Manager we
 
 - Paul Stokreef
 - Student HBO-ICT aan de Hogeschool van Amsterdam
-- https://portfolio-seven-topaz-36.vercel.app/
+- https://www.stokreef.com

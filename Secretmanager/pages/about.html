@@ -44,6 +44,27 @@
     <main class="about-section">
         <h2>About Us</h2>
         <p>Protect, Store, Succeed (PSS) is dedicated to safeguarding your secrets with the highest level of security. Our platform ensures that your sensitive data remains confidential and protected at all times.</p>
+        <br>
+        <div id="googleMap" style="width:50%;height:400px;margin: 0 auto;"></div>
+
+        <script>
+        function myMap() {
+        var mapProp= {
+            center:new google.maps.LatLng(52.359179,4.909609),
+            zoom:17,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(52.359179,4.909609),
+            map: map,
+            title: 'Hello World!'
+            });
+        }
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuIlAOsgRU-wX-oUWn6uV3OWrLT31D2wo&callback=myMap"></script>
+  
     </main>
 
     <footer>
