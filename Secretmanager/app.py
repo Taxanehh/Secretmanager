@@ -7,7 +7,7 @@
 # Flask import for session to prevent double user logins under same name
 # Flask import for redirecting login to dashboard
 # Flask import for finding redirects (because for some reason that's how it works)
-from flask import Flask, render_template, request, flash, session, redirect, url_for
+from flask import Flask, render_template, request, flash, session, redirect, url_for, jsonify
 # Bcrypt for session encryption & user encryption
 from flask_bcrypt import Bcrypt
 # Fernet for encrypting and decrypting secrets as an extra layer of security
@@ -28,14 +28,21 @@ from io import BytesIO
 import base64
 # Import for more specific typestirngs
 from typing import Tuple, List, Optional
+# Import for Chatbot
+import openai
+from flask_cors import CORS
 
 app = Flask(__name__, template_folder='pages', static_folder='static')
+CORS(app)
 bcrypt = Bcrypt(app)
 app.secret_key = 'paulus'
 
 # Secret key for encrypting and decrypting passwords (replace with your own saved key)
 fernet_key = b'cVpK1oJHq5E4cK_pltia43Vr1GekwO4dA_UlLDK-xgM='
 cipher = Fernet(fernet_key)
+
+# Set your OpenAI API key here
+openai.api_key = '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'
 
 # Seperate .CSV files for user data and secrets data
 USER_DATA_FILE = os.path.join(os.path.dirname(__file__), 'csv/users.csv')
@@ -51,6 +58,39 @@ def index() -> str:
         str: The rendered index.html page.
     """
     return render_template('index.html')
+
+# Please don't type too many queries as each query deducts an amount of money from my credit card
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    user_message = data.get('message')
+
+    # Here you can modify how the response is generated
+    if "hello" in user_message.lower():
+        bot_response = "Hi there! How can I assist you today?"
+    elif "log in" in user_message or "login" in user_message:
+        bot_response = "The Log In button is located at the top right corner of the homepage."    
+    elif "create an account" in user_message or "sign up" in user_message:
+        bot_response = "You can create an account by clicking the Register button on the top right corner of the homepage."
+    elif "contact support" in user_message or "contact us" in user_message:
+        bot_response = "You can reach our customer support by visiting the Contact Us page in the footer or visiting https://www.stokreef.com"
+    elif "2FA" in user_message:
+        bot_response = "If you have lost your 2FA, please contact support or visit https://www.stokreef.com"
+    elif "location" in user_message:
+        bot_response = "You can find directions on the Contact Us page."
+    elif "website feedback" in user_message:
+        bot_response = "We appreciate your feedback! You can send your thoughts through the website available in the footer of our website."
+    elif "help" in user_message.lower():
+        bot_response = "I'm here to help! What do you need assistance with?"
+    else:
+        # Call to OpenAI API for generating response
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_message}]
+        )
+        bot_response = response['choices'][0]['message']['content']
+
+    return jsonify({'message': bot_response})
 
 # Save new user to CSV
 def save_user(name: str, username: str, password_hash: str, totp_secret: str) -> None:

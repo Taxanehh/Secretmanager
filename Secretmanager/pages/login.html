@@ -60,6 +60,25 @@
         </form>
     </main>
 
+    <div id="chatbot-container">
+        <div id="chatbot-icon" onclick="toggleChat()">
+            😊
+        </div>
+        <div id="chatbot-window">
+            <div id="chatbot-header">
+                <h4>Chat with us</h4>
+                <button id="close-chat" onclick="toggleChat()">✖</button>
+            </div>
+            <div id="chatbot-body">
+                <div class="chat-messages"></div> <!-- This container holds all chat messages -->
+            </div>
+            <div id="chatbot-input-container">
+                <input type="text" id="chatbot-input" placeholder="Type your message...">
+                <button id="send-message">Send</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; MMXXIV <a href=https://www.stokreef.com>Paul S.</a></p>
     </footer>

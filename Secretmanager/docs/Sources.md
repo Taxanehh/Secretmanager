@@ -29,3 +29,4 @@ SIDENOTE: Waarom koos ik voor bepaalde bronnen? Simpelweg omdat dit de eerste / 
 - JavaScript adding Red Markers: https://stackoverflow.com/questions/21712465/adding-red-marker-to-google-maps
 - JS Data- Attributes: https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
 - Source for AJAX Code: https://www.w3schools.com/js/js_ajax_http_send.asp
+- Chatbot: OpenAI & https://pypi.org/project/Flask-Cors/
