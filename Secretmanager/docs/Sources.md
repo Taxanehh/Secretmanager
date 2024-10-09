@@ -1,3 +1,5 @@
+SIDENOTE: Waarom koos ik voor bepaalde bronnen? Simpelweg omdat dit de eerste / de beste links waren
+
 - Hero section: https://www.w3schools.com/howto/howto_css_hero_image.asp
 - Basic HTML Template: https://www.freecodecamp.org/news/html-starter-template-a-basic-html5-boilerplate-for-index-html/
 - Basically every css style ever: https://www.w3schools.com/css/
