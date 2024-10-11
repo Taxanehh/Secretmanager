@@ -32,6 +32,8 @@ from typing import Tuple, List, Optional
 import openai
 from flask_cors import CORS
 
+# All Keys have been deactivated / are unused, replace with your own keys !!
+
 app = Flask(__name__, template_folder='pages', static_folder='static')
 CORS(app)
 bcrypt = Bcrypt(app)
